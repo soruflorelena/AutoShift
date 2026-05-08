@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sys="clr-namespace:System;assembly=netstandard"
+             xmlns:viewmodels="clr-namespace:AutoShift.ViewModels"
+             xmlns:models="clr-namespace:AutoShift.Models"
+             x:Class="AutoShift.Views.CotizacionPage"
+             x:Name="Root"
+             x:DataType="viewmodels:CotizacionViewModel"
+             Title="Cotización"
+             BackgroundColor="{StaticResource AppBackground}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="25" Spacing="20">
+            <Label Text="Generar cotización" FontSize="24" FontAttributes="Bold" TextColor="White" />
+
+            <Border BackgroundColor="{StaticResource CardBackground}" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 20" Padding="20">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Solicitud" TextColor="{StaticResource MutedText}" FontSize="12" />
+                    <Label Text="{Binding SolicitudSeleccionada.TallerNombre}" TextColor="White" FontAttributes="Bold" FontSize="16" />
+                    <Label Text="{Binding SolicitudSeleccionada.VehiculoInfo}" TextColor="{StaticResource AccentBlue}" FontSize="12" />
+                    <Label Text="Servicios solicitados:" TextColor="{StaticResource MutedText}" FontSize="12" />
+                    <Label Text="{Binding SolicitudSeleccionada.ServiciosSolicitadosTexto}" TextColor="{StaticResource MutedText}" FontSize="14" />
+                    <Label Text="Diagnóstico previo:" TextColor="{StaticResource MutedText}" FontSize="12" />
+                    <Label Text="{Binding SolicitudSeleccionada.DiagnosticoCliente}" TextColor="{StaticResource MutedText}" FontSize="14" />
+                    <Label Text="{Binding SolicitudSeleccionada.DescripcionProblema}" TextColor="{StaticResource MutedText}" FontSize="14" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border BackgroundColor="{StaticResource CardBackground}" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 20" Padding="20">
+                <VerticalStackLayout Spacing="15">
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsPendiente}">
+                        <Label Text="Agregar servicios a la cotización" TextColor="{StaticResource AccentBlue}" FontAttributes="Bold" />
+                        <Entry Placeholder="Servicio" Text="{Binding NuevoDetalleNombre}" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
+                        <Grid ColumnDefinitions="2*, *" ColumnSpacing="10">
+                            <Entry Grid.Column="0" Placeholder="Precio" Text="{Binding NuevoDetallePrecio}" Keyboard="Numeric" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
+                            <Entry Grid.Column="1" Placeholder="Cantidad" Text="{Binding NuevoDetalleCantidad}" Keyboard="Numeric" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
+                        </Grid>
+                        <Button Text="AGREGAR LÍNEA" Command="{Binding AgregarDetalleCommand}" BackgroundColor="{StaticResource AccentBlue}" TextColor="White" CornerRadius="25"/>
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsPendiente}" Spacing="10">
+                        <Button Text="ENVIAR COTIZACIÓN" Command="{Binding EnviarCotizacionCommand}" BackgroundColor="{StaticResource Accent}" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                        <Button Text="SOLICITAR INSPECCIÓN FÍSICA" Command="{Binding SolicitarInspeccionCommand}" BackgroundColor="#8B5CF6" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsCotizado}" Spacing="12">
+                        <Label Text="Cotización enviada. Esperando respuesta del cliente." TextColor="White" FontAttributes="Bold" />
+                        <Label Text="El cliente revisará el presupuesto y podrá aceptar o rechazar." TextColor="{StaticResource MutedText}" FontSize="14" />
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsAceptado}" Spacing="12">
+                        <Label Text="El cliente aceptó la cotización. Programa una cita para recibir el vehículo." TextColor="White" FontAttributes="Bold" />
+                        <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
+                            <DatePicker Grid.Column="0" Date="{Binding FechaCitaSeleccionada}" MinimumDate="{x:Static sys:DateTime.Today}" />
+                            <TimePicker Grid.Column="1" Time="{Binding HoraCitaSeleccionada}" />
+                        </Grid>
+                        <Entry Placeholder="Comentarios para el cliente" Text="{Binding Comentario}" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
+                        <Button Text="AGENDAR CITA" Command="{Binding AsignarCitaCommand}" BackgroundColor="#10B981" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsCitaAsignada}" Spacing="12">
+                        <Label Text="Cita agendada" TextColor="White" FontAttributes="Bold" />
+                        <Label Text="{Binding SolicitudSeleccionada.FechaCitaTexto}" TextColor="{StaticResource MutedText}" FontSize="14" />
+                        <Button Text="INICIAR REPARACIÓN" Command="{Binding MarcarEnProcesoCommand}" BackgroundColor="#F59E0B" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsEnProceso}" Spacing="12">
+                        <Label Text="La reparación está en proceso." TextColor="White" FontAttributes="Bold" />
+                        <Button Text="MARCAR FINALIZADO" Command="{Binding MarcarFinalizadoCommand}" BackgroundColor="#22C55E" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsCompletado}" Spacing="12">
+                        <Label Text="El cliente indicó que la reparación está completa." TextColor="White" FontAttributes="Bold" />
+                        <Button Text="FINALIZAR TRABAJO" Command="{Binding MarcarFinalizadoCommand}" BackgroundColor="#22C55E" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsFinalizado}" Spacing="12">
+                        <Label Text="Solicitud finalizada. No hay más acciones pendientes." TextColor="White" FontAttributes="Bold" />
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsRechazado}" Spacing="12">
+                        <Label Text="El cliente rechazó la cotización. La solicitud se cierra." TextColor="White" FontAttributes="Bold" />
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsNecesitaInspeccion}" Spacing="12">
+                        <Label Text="El taller solicita inspección física para completar el diagnóstico." TextColor="White" FontAttributes="Bold" />
+                        <Label Text="Coordina con el cliente una visita al taller para revisión." TextColor="{StaticResource MutedText}" FontSize="14" />
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsInspeccionAceptada}" Spacing="12">
+                        <Label Text="El cliente aceptó la inspección. Propón una fecha para que lleve el vehículo." TextColor="White" FontAttributes="Bold" />
+                        <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
+                            <DatePicker Grid.Column="0" Date="{Binding FechaCitaSeleccionada}" MinimumDate="{x:Static sys:DateTime.Today}" />
+                            <TimePicker Grid.Column="1" Time="{Binding HoraCitaSeleccionada}" />
+                        </Grid>
+                        <Entry Placeholder="Comentarios para el cliente" Text="{Binding Comentario}" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
+                        <Button Text="PROPONER FECHA" Command="{Binding ProponerFechaCommand}" BackgroundColor="#10B981" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsFechasPropuestas}" Spacing="12">
+                        <Label Text="El cliente propuso fechas alternativas. Selecciona una para validar." TextColor="White" FontAttributes="Bold" />
+                        <Label Text="{Binding SolicitudSeleccionada.FechasAlternativasTexto}" TextColor="{StaticResource MutedText}" FontSize="14" />
+                        <Button Text="VALIDAR FECHA" Command="{Binding ValidarFechaCommand}" CommandParameter="{Binding SolicitudSeleccionada}" BackgroundColor="#3B82F6" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsFechaValidada}" Spacing="12">
+                        <Label Text="Fecha validada. Marca cuando se realice la inspección." TextColor="White" FontAttributes="Bold" />
+                        <Label Text="{Binding SolicitudSeleccionada.FechaValidadaTexto}" TextColor="{StaticResource MutedText}" FontSize="14" />
+                        <Button Text="MARCAR INSPECCIÓN REALIZADA" Command="{Binding MarcarInspeccionRealizadaCommand}" BackgroundColor="#F59E0B" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsInspeccionRealizada}" Spacing="12">
+                        <Label Text="Inspección realizada. Ahora puedes enviar la cotización." TextColor="White" FontAttributes="Bold" />
+                        <Button Text="ENVIAR COTIZACIÓN" Command="{Binding EnviarCotizacionCommand}" BackgroundColor="{StaticResource Accent}" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                    </StackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <CollectionView ItemsSource="{Binding Detalles}" SelectionMode="None" HeightRequest="200">
+                <CollectionView.EmptyView>
+                    <Label Text="Agrega servicios para crear la cotización." TextColor="{StaticResource MutedText}" HorizontalOptions="Center" VerticalOptions="Center" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:DetalleServicio">
+                        <Border BackgroundColor="{StaticResource CardBackground}" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 15" Padding="15" Margin="0,0,0,10">
+                            <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
+                                <Label Text="{Binding Nombre}" TextColor="White" FontAttributes="Bold" />
+                                <Label Grid.Column="1" Text="{Binding Precio, StringFormat='${0:F2}'}" TextColor="{StaticResource Accent}" />
+                                <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Cantidad, StringFormat='Cantidad: {0}'}" TextColor="{StaticResource MutedText}" FontSize="12" />
+                                <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
+        Text="Eliminar"
+        Command="{Binding Path=BindingContext.EliminarDetalleCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+        CommandParameter="{Binding .}"
+        FontSize="10"
+        BackgroundColor="#EF4444"
+        TextColor="White"
+        CornerRadius="15" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="Total estimado:" TextColor="{StaticResource MutedText}" FontSize="14" />
+            <Label Text="{Binding TotalCotizacion, StringFormat='${0:F2}'}" TextColor="{StaticResource Accent}" FontAttributes="Bold" FontSize="28" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

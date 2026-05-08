@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:AutoShift.ViewModels"
+             xmlns:models="clr-namespace:AutoShift.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="AutoShift.Views.MainTallerPage"
+             x:Name="Root"
+             x:DataType="viewmodels:MainTallerViewModel"
+             BackgroundColor="#0B0D0F"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto, Auto, *">
+
+        <Grid Grid.Row="0" BackgroundColor="#111418" Padding="25,45,25,20" ColumnDefinitions="*, Auto">
+            <VerticalStackLayout Spacing="2">
+                <Label Text="ADMINISTRACIÓN" TextColor="#5B7083" FontSize="10" FontAttributes="Bold" CharacterSpacing="2"/>
+                <Label Text="Centro de Trabajo" TextColor="#FFFFFF" FontSize="26" FontAttributes="Bold"/>
+            </VerticalStackLayout>
+            <Button Grid.Column="1" Text="SALIR" Command="{Binding CerrarSesionCommand}"
+                    BackgroundColor="#1F242C" TextColor="#E1E8ED" FontSize="12" FontAttributes="Bold"
+                    Padding="15,0" HeightRequest="38" CornerRadius="19"/>
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*, *, *" Padding="20,15" ColumnSpacing="12" BackgroundColor="#111418">
+            <Border BackgroundColor="#181C22" StrokeThickness="1" Stroke="#242C37" Padding="12,15" StrokeShape="RoundRectangle 12">
+                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                    <Label Text="{Binding NuevasCount}" TextColor="#FFFFFF" FontSize="22" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Text="NUEVAS" TextColor="#FFB01F" FontSize="9" FontAttributes="Bold" HorizontalOptions="Center" CharacterSpacing="1"/>
+                </VerticalStackLayout>
+            </Border>
+            <Border Grid.Column="1" BackgroundColor="#181C22" StrokeThickness="1" Stroke="#242C37" Padding="12,15" StrokeShape="RoundRectangle 12">
+                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                    <Label Text="{Binding EnCursoCount}" TextColor="#FFFFFF" FontSize="22" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Text="EN CURSO" TextColor="#3B82F6" FontSize="9" FontAttributes="Bold" HorizontalOptions="Center" CharacterSpacing="1"/>
+                </VerticalStackLayout>
+            </Border>
+            <Border Grid.Column="2" BackgroundColor="#181C22" StrokeThickness="1" Stroke="#242C37" Padding="12,15" StrokeShape="RoundRectangle 12">
+                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                    <Label Text="{Binding GananciasMes, StringFormat='${0:N0}'}" TextColor="#10B981" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Label Text="GANANCIA" TextColor="#8899A6" FontSize="9" FontAttributes="Bold" HorizontalOptions="Center" CharacterSpacing="1"/>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <ScrollView Grid.Row="2" Margin="20,15">
+            <VerticalStackLayout Spacing="24">
+
+                <Border BackgroundColor="#181C22" Padding="4" StrokeShape="RoundRectangle 24" StrokeThickness="0" HorizontalOptions="Center" WidthRequest="320">
+                    <Grid ColumnDefinitions="*, *">
+                        <Button Text="SOLICITUDES" Command="{Binding MostrarSolicitudesCommand}" 
+                                BackgroundColor="{Binding TabSolicitudesColor}" TextColor="White" 
+                                FontSize="12" FontAttributes="Bold" CornerRadius="20" HeightRequest="40"/>
+                        <Button Grid.Column="1" Text="SERVICIOS" Command="{Binding MostrarServiciosCommand}" 
+                                BackgroundColor="{Binding TabServiciosColor}" TextColor="White" 
+                                FontSize="12" FontAttributes="Bold" CornerRadius="20" HeightRequest="40"/>
+                    </Grid>
+                </Border>
+
+                <VerticalStackLayout IsVisible="{Binding IsSolicitudesVisible}" Spacing="24">
+
+                    <Label Text="ENVIADAS" TextColor="#FFB01F" FontSize="14" FontAttributes="Bold" CharacterSpacing="1"/>
+                    <CollectionView ItemsSource="{Binding SolicitudesEnviadas}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="No hay solicitudes enviadas" TextColor="#5B7083" HorizontalTextAlignment="Center" Margin="0,10"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:SolicitudServicio">
+                                <Border BackgroundColor="#15191E" Stroke="#222831" StrokeThickness="1" Margin="0,0,0,12" Padding="18" StrokeShape="RoundRectangle 16">
+                                    <Grid RowDefinitions="Auto, Auto, Auto">
+                                        <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label Text="{Binding VehiculoInfo}" TextColor="White" FontSize="16" FontAttributes="Bold"/>
+                                                <Label Text="{Binding ClienteNombre}" TextColor="#8899A6" FontSize="13"/>
+                                            </VerticalStackLayout>
+                                            <Border Grid.Column="1" BackgroundColor="#222B36" StrokeThickness="0" Padding="10,5" StrokeShape="RoundRectangle 8">
+                                                <Label Text="{Binding EstadoTexto}" TextColor="#FFB01F" FontSize="10" FontAttributes="Bold"/>
+                                            </Border>
+                                        </Grid>
+                                        <Label Grid.Row="1" Text="{Binding DescripcionProblema}" TextColor="#CBD5E1" Margin="0,12" FontSize="14" LineHeight="1.2"/>
+                                        <Button Grid.Row="2" Text="GESTIONAR / COTIZAR" 
+                                                Command="{Binding Path=BindingContext.ResponderSolicitudCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#1F2937" TextColor="White" FontSize="13" FontAttributes="Bold" CornerRadius="10" HeightRequest="42"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Label Text="INSPECCIONES" TextColor="#F59E0B" FontSize="14" FontAttributes="Bold" CharacterSpacing="1"/>
+                    <CollectionView ItemsSource="{Binding SolicitudesInspecciones}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="No hay inspecciones pendientes" TextColor="#5B7083" HorizontalTextAlignment="Center" Margin="0,10"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:SolicitudServicio">
+                                <Border BackgroundColor="#15191E" Stroke="#222831" StrokeThickness="1" Margin="0,0,0,12" Padding="18" StrokeShape="RoundRectangle 16">
+                                    <Grid RowDefinitions="Auto, Auto, Auto">
+                                        <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label Text="{Binding VehiculoInfo}" TextColor="White" FontSize="16" FontAttributes="Bold"/>
+                                                <Label Text="{Binding ClienteNombre}" TextColor="#8899A6" FontSize="13"/>
+                                            </VerticalStackLayout>
+                                            <Border Grid.Column="1" BackgroundColor="#2C2015" StrokeThickness="0" Padding="10,5" StrokeShape="RoundRectangle 8">
+                                                <Label Text="{Binding EstadoTexto}" TextColor="#F59E0B" FontSize="10" FontAttributes="Bold"/>
+                                            </Border>
+                                        </Grid>
+                                        <Label Grid.Row="1" Text="{Binding DescripcionProblema}" TextColor="#CBD5E1" Margin="0,12" FontSize="14" LineHeight="1.2"/>
+                                        <Button Grid.Row="2" Text="GESTIONAR INSPECCIÓN" 
+                                                Command="{Binding Path=BindingContext.ResponderSolicitudCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#1F2937" TextColor="White" FontSize="13" FontAttributes="Bold" CornerRadius="10" HeightRequest="42"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Label Text="ACEPTADAS" TextColor="#3B82F6" FontSize="14" FontAttributes="Bold" CharacterSpacing="1"/>
+                    <CollectionView ItemsSource="{Binding SolicitudesAceptadas}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="No hay solicitudes aceptadas" TextColor="#5B7083" HorizontalTextAlignment="Center" Margin="0,10"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:SolicitudServicio">
+                                <Border BackgroundColor="#15191E" Stroke="#222831" StrokeThickness="1" Margin="0,0,0,12" Padding="18" StrokeShape="RoundRectangle 16">
+                                    <Grid RowDefinitions="Auto, Auto, Auto">
+                                        <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label Text="{Binding VehiculoInfo}" TextColor="White" FontSize="16" FontAttributes="Bold"/>
+                                                <Label Text="{Binding ClienteNombre}" TextColor="#8899A6" FontSize="13"/>
+                                            </VerticalStackLayout>
+                                            <Border Grid.Column="1" BackgroundColor="#13243C" StrokeThickness="0" Padding="10,5" StrokeShape="RoundRectangle 8">
+                                                <Label Text="{Binding EstadoTexto}" TextColor="#3B82F6" FontSize="10" FontAttributes="Bold"/>
+                                            </Border>
+                                        </Grid>
+                                        <Label Grid.Row="1" Text="{Binding DescripcionProblema}" TextColor="#CBD5E1" Margin="0,12" FontSize="14" LineHeight="1.2"/>
+                                        <Button Grid.Row="2" Text="GESTIONAR CITA" 
+                                                Command="{Binding Path=BindingContext.ResponderSolicitudCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#1F2937" TextColor="White" FontSize="13" FontAttributes="Bold" CornerRadius="10" HeightRequest="42"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Label Text="EN PROCESO" TextColor="#F59E0B" FontSize="14" FontAttributes="Bold" CharacterSpacing="1"/>
+                    <CollectionView ItemsSource="{Binding SolicitudesEnProceso}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="No hay solicitudes en proceso" TextColor="#5B7083" HorizontalTextAlignment="Center" Margin="0,10"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:SolicitudServicio">
+                                <Border BackgroundColor="#15191E" Stroke="#222831" StrokeThickness="1" Margin="0,0,0,12" Padding="18" StrokeShape="RoundRectangle 16">
+                                    <Grid RowDefinitions="Auto, Auto, Auto">
+                                        <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label Text="{Binding VehiculoInfo}" TextColor="White" FontSize="16" FontAttributes="Bold"/>
+                                                <Label Text="{Binding ClienteNombre}" TextColor="#8899A6" FontSize="13"/>
+                                            </VerticalStackLayout>
+                                            <Border Grid.Column="1" BackgroundColor="#2C2015" StrokeThickness="0" Padding="10,5" StrokeShape="RoundRectangle 8">
+                                                <Label Text="{Binding EstadoTexto}" TextColor="#F59E0B" FontSize="10" FontAttributes="Bold"/>
+                                            </Border>
+                                        </Grid>
+                                        <Label Grid.Row="1" Text="{Binding DescripcionProblema}" TextColor="#CBD5E1" Margin="0,12" FontSize="14" LineHeight="1.2"/>
+                                        <Button Grid.Row="2" Text="GESTIONAR REPARACIÓN" 
+                                                Command="{Binding Path=BindingContext.ResponderSolicitudCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#1F2937" TextColor="White" FontSize="13" FontAttributes="Bold" CornerRadius="10" HeightRequest="42"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Label Text="FINALIZADAS" TextColor="#10B981" FontSize="14" FontAttributes="Bold" CharacterSpacing="1"/>
+                    <CollectionView ItemsSource="{Binding SolicitudesFinalizadas}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="No hay solicitudes finalizadas" TextColor="#5B7083" HorizontalTextAlignment="Center" Margin="0,10"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:SolicitudServicio">
+                                <Border BackgroundColor="#15191E" Stroke="#222831" StrokeThickness="1" Margin="0,0,0,12" Padding="18" StrokeShape="RoundRectangle 16">
+                                    <Grid RowDefinitions="Auto, Auto">
+                                        <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label Text="{Binding VehiculoInfo}" TextColor="White" FontSize="16" FontAttributes="Bold"/>
+                                                <Label Text="{Binding ClienteNombre}" TextColor="#8899A6" FontSize="13"/>
+                                            </VerticalStackLayout>
+                                            <Border Grid.Column="1" BackgroundColor="#102E26" StrokeThickness="0" Padding="10,5" StrokeShape="RoundRectangle 8">
+                                                <Label Text="{Binding EstadoTexto}" TextColor="#10B981" FontSize="10" FontAttributes="Bold"/>
+                                            </Border>
+                                        </Grid>
+                                        <Label Grid.Row="1" Text="{Binding DescripcionProblema}" TextColor="#CBD5E1" Margin="0,12,0,0" FontSize="14" LineHeight="1.2"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+
+                <VerticalStackLayout IsVisible="{Binding IsServiciosVisible}" Spacing="24">
+
+                    <Border BackgroundColor="#15191E" Stroke="#222831" StrokeThickness="1" StrokeShape="RoundRectangle 20" Padding="20">
+                        <VerticalStackLayout Spacing="16">
+                            <Label Text="AGREGAR NUEVO SERVICIO" TextColor="#FFB01F" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5"/>
+
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Nombre del servicio" TextColor="#8899A6" FontSize="11" FontAttributes="Bold"/>
+                                <Border BackgroundColor="#0F1216" Stroke="#222831" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="12,4">
+                                    <Entry Text="{Binding NuevoNombre}" Placeholder="Ej. Afinación Mayor" PlaceholderColor="#4F5664" TextColor="White" BackgroundColor="Transparent"/>
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Descripción" TextColor="#8899A6" FontSize="11" FontAttributes="Bold"/>
+                                <Border BackgroundColor="#0F1216" Stroke="#222831" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="12,4">
+                                    <Editor Text="{Binding NuevaDescripcion}" Placeholder="Escribe una breve descripción del servicio..." PlaceholderColor="#4F5664" TextColor="White" HeightRequest="70" BackgroundColor="Transparent"/>
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <Grid ColumnDefinitions="*, *" ColumnSpacing="12">
+                                <VerticalStackLayout Spacing="6">
+                                    <Label Text="Precio base" TextColor="#8899A6" FontSize="11" FontAttributes="Bold"/>
+                                    <Border BackgroundColor="#0F1216" Stroke="#222831" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="12,4">
+                                        <Entry Text="{Binding NuevoPrecio, Mode=TwoWay}" Keyboard="Numeric" Placeholder="$ 0.00" PlaceholderColor="#4F5664" TextColor="White" BackgroundColor="Transparent"/>
+                                    </Border>
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                    <Label Text="Marcas compatibles" TextColor="#8899A6" FontSize="11" FontAttributes="Bold"/>
+                                    <Border BackgroundColor="#0F1216" Stroke="#222831" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="12,4">
+                                        <Entry Text="{Binding NuevasMarcas}" Placeholder="Ej. Multimarca, Ford..." PlaceholderColor="#4F5664" TextColor="White" BackgroundColor="Transparent"/>
+                                    </Border>
+                                </VerticalStackLayout>
+                            </Grid>
+
+                            <Button Text="{Binding TextoBotonGuardar}" Command="{Binding GuardarServicioCommand}" 
+                                    BackgroundColor="#FFB01F" TextColor="#0F141C" FontSize="13" FontAttributes="Bold" CornerRadius="10" HeightRequest="45" Margin="0,8,0,0"/>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Label Text="SERVICIOS REGISTRADOS" TextColor="#5B7083" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5"/>
+
+                    <CollectionView ItemsSource="{Binding MisServicios}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="No hay servicios registrados todavía." TextColor="#5B7083" HorizontalTextAlignment="Center" Margin="0,10"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Servicio">
+                                <Border BackgroundColor="#15191E" Stroke="#222831" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="20" Margin="0,0,0,14">
+                                    <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" RowSpacing="10">
+
+                                        <Grid ColumnDefinitions="*, Auto" Grid.Row="0">
+                                            <Label Text="{Binding Nombre}" TextColor="White" FontAttributes="Bold" FontSize="17" VerticalOptions="Center"/>
+                                            <Label Grid.Column="1" Text="{Binding PrecioBase, StringFormat='${0:F2}'}" TextColor="#10B981" FontAttributes="Bold" FontSize="17" VerticalOptions="Center"/>
+                                        </Grid>
+
+                                        <Label Grid.Row="1" Text="{Binding Descripcion}" TextColor="#CBD5E1" FontSize="13" LineBreakMode="WordWrap" LineHeight="1.2"/>
+
+                                        <HorizontalStackLayout Grid.Row="2" Spacing="6" VerticalOptions="Center">
+                                            <Border BackgroundColor="#1E232B" StrokeThickness="0" Padding="8,4" StrokeShape="RoundRectangle 6">
+                                                <HorizontalStackLayout Spacing="4">
+                                                    <Label Text="COMPATIBILIDAD:" TextColor="#8899A6" FontSize="9" FontAttributes="Bold" VerticalOptions="Center"/>
+                                                    <Label Text="{Binding MarcasTexto}" TextColor="White" FontSize="10" FontAttributes="Bold" VerticalOptions="Center"/>
+                                                </HorizontalStackLayout>
+                                            </Border>
+                                        </HorizontalStackLayout>
+
+                                        <BoxView Grid.Row="3" HeightRequest="1" Color="#222831" Margin="0,5,0,0"/>
+
+                                        <Grid Grid.Row="4" ColumnDefinitions="*, Auto">
+                                            <HorizontalStackLayout Grid.Column="1" Spacing="10" HorizontalOptions="End">
+                                                <Button Text="EDITAR" Command="{Binding Path=BindingContext.PrepararEdicionCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" 
+                                    BackgroundColor="#1B2735" TextColor="#3B82F6" FontSize="11" FontAttributes="Bold" CornerRadius="8" HeightRequest="34" WidthRequest="90"/>
+                                                <Button Text="ELIMINAR" Command="{Binding Path=BindingContext.EliminarServicioCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" 
+                                    BackgroundColor="#2A1A1C" TextColor="#EF4444" FontSize="11" FontAttributes="Bold" CornerRadius="8" HeightRequest="34" WidthRequest="90"/>
+                                            </HorizontalStackLayout>
+                                        </Grid>
+
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

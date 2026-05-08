@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:AutoShift.ViewModels"
+             xmlns:models="clr-namespace:AutoShift.Models"
+             x:Class="AutoShift.Views.VehiculosPage"
+             x:Name="Root"
+             x:DataType="viewmodels:VehiculosViewModel"
+             BackgroundColor="#07080A"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto, *">
+
+        <Border Grid.Row="0" 
+                BackgroundColor="#0F1115" 
+                Padding="25,55,25,20" 
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 0,0,25,25">
+            <VerticalStackLayout Spacing="5">
+                <Label Text="GESTIÓN DE UNIDADES" 
+                       TextColor="#FFC107" 
+                       FontSize="10" 
+                       FontAttributes="Bold" 
+                       CharacterSpacing="2"/>
+                <Label Text="Mis Vehículos" 
+                       TextColor="White" 
+                       FontSize="26" 
+                       FontAttributes="Bold"/>
+            </VerticalStackLayout>
+        </Border>
+
+        <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+            <VerticalStackLayout Padding="25" Spacing="30">
+
+                <Border BackgroundColor="#16191E" 
+                        Stroke="#1A1D23" 
+                        StrokeThickness="1" 
+                        StrokeShape="RoundRectangle 16" 
+                        Padding="20">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="REGISTRO TÉCNICO" 
+                               TextColor="#4F5664" 
+                               FontSize="11" 
+                               FontAttributes="Bold" 
+                               CharacterSpacing="1"/>
+
+                        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, *" ColumnSpacing="10" RowSpacing="10">
+                            <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="4">
+                                <Entry Placeholder="Marca" 
+                                       Text="{Binding Marca}" 
+                                       PlaceholderColor="#2E333D" 
+                                       TextColor="White" 
+                                       FontSize="14" 
+                                       BackgroundColor="#0A0C10"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="4">
+                                <Entry Placeholder="Modelo" 
+                                       Text="{Binding Modelo}" 
+                                       PlaceholderColor="#2E333D" 
+                                       TextColor="White" 
+                                       FontSize="14" 
+                                       BackgroundColor="#0A0C10"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="4">
+                                <Entry Placeholder="Año" 
+                                       Text="{Binding Anio}" 
+                                       Keyboard="Numeric" 
+                                       PlaceholderColor="#2E333D" 
+                                       TextColor="White" 
+                                       FontSize="14" 
+                                       BackgroundColor="#0A0C10"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="4">
+                                <Entry Placeholder="Placas" 
+                                       Text="{Binding Placas}" 
+                                       PlaceholderColor="#2E333D" 
+                                       TextColor="White" 
+                                       FontSize="14" 
+                                       BackgroundColor="#0A0C10"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="2" Grid.ColumnSpan="2" Spacing="10" Margin="0,10,0,0">
+
+                                <Button Text="REGISTRAR UNIDAD" 
+                                        Command="{Binding AgregarVehiculoCommand}" 
+                                        BackgroundColor="#FFC107" 
+                                        TextColor="#0A0C10" 
+                                        FontAttributes="Bold" 
+                                        HeightRequest="48"
+                                        CornerRadius="8">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding IsEditing}" Value="True">
+                                            <Setter Property="IsVisible" Value="False" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+
+                                <Button Text="GUARDAR CAMBIOS" 
+                                        Command="{Binding GuardarVehiculoCommand}" 
+                                        BackgroundColor="#FFC107" 
+                                        TextColor="#0A0C10" 
+                                        FontAttributes="Bold" 
+                                        HeightRequest="48"
+                                        CornerRadius="8"
+                                        IsVisible="False">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding IsEditing}" Value="True">
+                                            <Setter Property="IsVisible" Value="True" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+
+                                <Button Text="CANCELAR OPERACIÓN" 
+                                        Command="{Binding CancelarEdicionCommand}" 
+                                        BackgroundColor="Transparent" 
+                                        TextColor="#CC2D2D" 
+                                        BorderColor="#CC2D2D"
+                                        BorderWidth="1"
+                                        HeightRequest="45" 
+                                        CornerRadius="8"
+                                        IsVisible="False">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding IsEditing}" Value="True">
+                                            <Setter Property="IsVisible" Value="True" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="INVENTARIO DE UNIDADES" 
+                           TextColor="#4F5664" 
+                           FontSize="11" 
+                           FontAttributes="Bold" 
+                           CharacterSpacing="1"/>
+
+                    <CollectionView ItemsSource="{Binding Vehiculos}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="No se encontraron unidades registradas." 
+                                   TextColor="#2E333D" 
+                                   HorizontalOptions="Center" 
+                                   Margin="0,40"
+                                   FontSize="13"/>
+                        </CollectionView.EmptyView>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Vehiculo">
+                                <SwipeView>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems Mode="Reveal">
+                                            <SwipeItem Text="Editar" 
+                                                       BackgroundColor="#1A1D23" 
+                                                       Command="{Binding Path=BindingContext.EditarVehiculoCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                       CommandParameter="{Binding .}" />
+                                            <SwipeItem Text="Eliminar" 
+                                                       BackgroundColor="#CC2D2D" 
+                                                       Command="{Binding Path=BindingContext.EliminarVehiculoCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" 
+                                                       CommandParameter="{Binding .}" />
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
+
+                                    <Border BackgroundColor="#111419" 
+                                            Stroke="#1A1D23" 
+                                            StrokeThickness="1" 
+                                            Padding="18" 
+                                            Margin="0,0,0,12" 
+                                            StrokeShape="RoundRectangle 12">
+                                        <Grid ColumnDefinitions="*, Auto">
+                                            <VerticalStackLayout Spacing="4">
+                                                <Label Text="{Binding Descripcion}" 
+                                                       TextColor="White" 
+                                                       FontAttributes="Bold" 
+                                                       FontSize="16"/>
+                                                <HorizontalStackLayout Spacing="10">
+                                                    <Label Text="{Binding Placas}" 
+                                                           TextColor="#FFC107" 
+                                                           FontSize="11" 
+                                                           FontAttributes="Bold"/>
+                                                    <BoxView WidthRequest="1" HeightRequest="10" Color="#2E333D" VerticalOptions="Center"/>
+                                                    <Label Text="{Binding Marca}" 
+                                                           TextColor="#4F5664" 
+                                                           FontSize="11"/>
+                                                </HorizontalStackLayout>
+                                            </VerticalStackLayout>
+
+                                            <BoxView Grid.Column="1" 
+                                                     WidthRequest="3" 
+                                                     HeightRequest="20" 
+                                                     Color="#1A1D23" 
+                                                     CornerRadius="2"/>
+                                        </Grid>
+                                    </Border>
+                                </SwipeView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

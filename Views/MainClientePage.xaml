@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:AutoShift.ViewModels"
+             xmlns:models="clr-namespace:AutoShift.Models"
+             x:Class="AutoShift.Views.MainClientePage"
+             x:Name="Root"
+             x:DataType="viewmodels:MainClienteViewModel"
+             BackgroundColor="#07080A"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto, *">
+
+        <Border Grid.Row="0" 
+                BackgroundColor="#0F1115" 
+                Padding="25,55,20,20" 
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 0,0,25,25">
+            <Grid ColumnDefinitions="*, Auto">
+
+                <VerticalStackLayout VerticalOptions="Center">
+                    <Label Text="SISTEMA ACTIVO" 
+                           TextColor="#FFC107" 
+                           FontSize="10" 
+                           FontAttributes="Bold" 
+                           CharacterSpacing="2"/>
+                    <Label Text="Panel de Control" 
+                           TextColor="White" 
+                           FontSize="26" 
+                           FontAttributes="Bold"/>
+                </VerticalStackLayout>
+
+                <Border Grid.Column="1" 
+                        HeightRequest="45" 
+                        WidthRequest="45" 
+                        BackgroundColor="#1A1D23" 
+                        Stroke="#CC2D2D"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 12"
+                        VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding CerrarSesionCommand}"/>
+                    </Border.GestureRecognizers>
+
+                    <Path Data="M 15,10 L 25,10 L 25,35 L 15,35 M 20,22.5 L 35,22.5 M 30,17.5 L 35,22.5 L 30,27.5" 
+                          Stroke="#CC2D2D" 
+                          StrokeThickness="2" 
+                          HorizontalOptions="Center" 
+                          VerticalOptions="Center" 
+                          Scale="0.8"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+            <VerticalStackLayout Padding="25" Spacing="30">
+
+                <Border BackgroundColor="#FFC107" 
+                        StrokeThickness="0" 
+                        StrokeShape="RoundRectangle 16" 
+                        Padding="25">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="ANÁLISIS DE FALLAS" 
+                               TextColor="#07080A" 
+                               FontAttributes="Bold" 
+                               FontSize="14" 
+                               CharacterSpacing="1"/>
+                        <Label Text="Detecte anomalías mecánicas y reciba presupuestos base de forma inmediata." 
+                               TextColor="#07080A" 
+                               FontSize="13" 
+                               LineHeight="1.2"
+                               Opacity="0.9"/>
+                        <Button Text="INICIAR EVALUACIÓN"
+                                Command="{Binding IrADiagnosticoCommand}"
+                                BackgroundColor="#07080A"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                HeightRequest="48"
+                                CornerRadius="8"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
+                    <Border Grid.Column="0" BackgroundColor="#16191E" Stroke="#2E333D" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="20">
+                        <VerticalStackLayout Spacing="10">
+                            <BoxView WidthRequest="20" HeightRequest="2" Color="#FFC107" HorizontalOptions="Start"/>
+                            <Label Text="Vehículos" TextColor="White" FontAttributes="Bold" FontSize="15"/>
+                            <Label Text="Registros" FontSize="11" TextColor="#4F5664"/>
+                        </VerticalStackLayout>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding VerVehiculosCommand}"/>
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Border Grid.Column="1" BackgroundColor="#16191E" Stroke="#2E333D" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="20">
+                        <VerticalStackLayout Spacing="10">
+                            <BoxView WidthRequest="20" HeightRequest="2" Color="#4F5664" HorizontalOptions="Start"/>
+                            <Label Text="Historial" TextColor="White" FontAttributes="Bold" FontSize="15"/>
+                            <Label Text="Servicios" FontSize="11" TextColor="#4F5664"/>
+                        </VerticalStackLayout>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding VerMisSolicitudesCommand}"/>
+                        </Border.GestureRecognizers>
+                    </Border>
+                </Grid>
+
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="UNIDADES DE SERVICIO" TextColor="#4F5664" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5"/>
+
+                    <CollectionView ItemsSource="{Binding Talleres}" SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Taller">
+                                <Border BackgroundColor="#0F1115" 
+                                        Stroke="#1A1D23" 
+                                        StrokeThickness="1" 
+                                        Padding="15" 
+                                        Margin="0,0,0,12" 
+                                        StrokeShape="RoundRectangle 12">
+                                    <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                                        <VerticalStackLayout VerticalOptions="Center">
+                                            <Label Text="{Binding Nombre}" TextColor="White" FontAttributes="Bold" FontSize="15"/>
+                                            <Label Text="{Binding Ubicacion}" TextColor="#4F5664" FontSize="12" Margin="0,2,0,0"/>
+                                        </VerticalStackLayout>
+
+                                        <Border Grid.Column="1" BackgroundColor="#1A1D23" Stroke="#FFC107" StrokeThickness="1" HeightRequest="32" WidthRequest="60" StrokeShape="RoundRectangle 6">
+                                            <Label Text="VER" TextColor="#FFC107" FontSize="10" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                        </Border>
+                                    </Grid>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                            Command="{Binding Path=BindingContext.VerDetalleTallerCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

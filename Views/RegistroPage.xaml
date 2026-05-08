@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AutoShift.ViewModels;assembly=AutoShift"
+             x:Class="AutoShift.Views.RegistroPage"
+             x:DataType="vm:RegistroViewModel"
+             BackgroundColor="{StaticResource AppBackground}">
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="25">
+            <Label Text="Registro de Cuenta" TextColor="White" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
+
+            <Border BackgroundColor="{StaticResource CardBackground}" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 20" Padding="20">
+                <VerticalStackLayout Spacing="10">
+
+                    <Entry Placeholder="Nombre(s)*" Text="{Binding Nombre}" TextColor="White"/>
+                    <Grid ColumnDefinitions="*,*">
+                        <Entry Grid.Column="0" Placeholder="Ap. Paterno*" Text="{Binding ApellidoPaterno}" TextColor="White"/>
+                        <Entry Grid.Column="1" Placeholder="Ap. Materno (Opc)" Text="{Binding ApellidoMaterno}" TextColor="White"/>
+                    </Grid>
+
+                    <Entry Placeholder="Correo Electrónico*" Text="{Binding Email}" Keyboard="Email" TextColor="White"/>
+                    <Entry Placeholder="Teléfono*" Text="{Binding Telefono}" Keyboard="Telephone" TextColor="White"/>
+
+                    <Label Text="Ubicación" TextColor="{StaticResource AccentBlue}" Margin="0,10,0,0"/>
+                    <Grid ColumnDefinitions="*, 2*">
+                        <Entry Grid.Column="0" Placeholder="C.P.*" Text="{Binding CodigoPostal}" MaxLength="5" Keyboard="Numeric" TextColor="White"/>
+                        <Entry Grid.Column="1" Placeholder="Estado" Text="{Binding Estado}" TextColor="White" IsEnabled="False"/>
+                    </Grid>
+                    <Entry Placeholder="Ciudad/Municipio" Text="{Binding Ciudad}" TextColor="White"/>
+                    <Entry Placeholder="Colonia" Text="{Binding Colonia}" TextColor="White"/>
+                    <Entry Placeholder="Calle y Número*" Text="{Binding Calle}" TextColor="White"/>
+                    <Editor Placeholder="Referencias (Ej. Portón azul, junto a farmacia...)" Text="{Binding Referencias}" AutoSize="TextChanges" BackgroundColor="{StaticResource CardBackground}" TextColor="White"/>
+
+                    <Grid ColumnDefinitions="*, Auto">
+                    <Label Text="Seguridad" TextColor="{StaticResource AccentBlue}" Margin="0,10,0,0"/>
+                        <Entry Grid.Column="0" Placeholder="Contraseña*" IsPassword="{Binding IsPasswordVisible}" Text="{Binding Password}" TextColor="White"/>
+                        <Button Grid.Column="1" Text="👁" Command="{Binding TogglePasswordVisibilityCommand}" BackgroundColor="Transparent"/>
+                    </Grid>
+                    <Entry Placeholder="Confirmar Contraseña*" IsPassword="{Binding IsPasswordVisible}" Text="{Binding ConfirmPassword}" TextColor="White"/>
+
+                    <Picker Title="Selecciona tu Rol*" ItemsSource="{Binding Roles}" SelectedItem="{Binding RolSeleccionado}" TextColor="White" TitleColor="Gray"/>
+
+                    <Button Text="CREAR CUENTA" Command="{Binding RegistrarCommand}" BackgroundColor="{StaticResource AccentBlue}" Margin="0,20,0,0" HeightRequest="50"/>
+                </VerticalStackLayout>
+            </Border>
+            <Button Text="Cancelar" Command="{Binding VolverLoginCommand}" BackgroundColor="Transparent" TextColor="{StaticResource MutedText}"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

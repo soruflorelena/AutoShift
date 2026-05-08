@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:AutoShift.ViewModels"
+    x:Class="AutoShift.Views.LoginPage"
+    x:DataType="vm:LoginViewModel"
+    BackgroundColor="{StaticResource AppBackground}">
+    <Grid RowDefinitions="35*, 65*" BackgroundColor="{StaticResource AppBackground}">
+        <VerticalStackLayout Grid.Row="0" VerticalOptions="Center" Spacing="0">
+            <Label Text="AUTO" FontSize="48" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center"/>
+            <Label Text="SHIFT" FontSize="48" FontAttributes="Bold" TextColor="{StaticResource AccentBlue}" HorizontalTextAlignment="Center" Margin="0,-15,0,0"/>
+            <BoxView HeightRequest="2" WidthRequest="50" Color="{StaticResource AccentBlue}" HorizontalOptions="Center" Margin="0,10"/>
+        </VerticalStackLayout>
+
+        <Border Grid.Row="1" 
+            Margin="20,0,20,20" 
+            Padding="30" 
+            BackgroundColor="{StaticResource CardBackground}"
+            Stroke="{StaticResource CardBorder}"
+            StrokeShape="RoundRectangle 30"
+            VerticalOptions="Start">
+
+            <VerticalStackLayout Spacing="20">
+                <Label Text="Bienvenido de nuevo" FontSize="22" FontAttributes="Bold" TextColor="White" Margin="0,0,0,10"/>
+
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Correo Electrónico" TextColor="{StaticResource AccentBlueBrush}" FontSize="12" Margin="5,0"/>
+                    <Border Stroke="{StaticResource CardBorder}" BackgroundColor="{StaticResource CardBackground}" StrokeShape="RoundRectangle 12">
+                        <Entry x:DataType="vm:LoginViewModel" Text="{Binding Email}" Placeholder="ejemplo@correo.com" TextColor="White" Keyboard="Email"/>
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Contraseña" TextColor="{StaticResource AccentBlueBrush}" FontSize="12" Margin="5,0"/>
+                    <Border Stroke="{StaticResource CardBorder}" BackgroundColor="{StaticResource CardBackground}" StrokeShape="RoundRectangle 12">
+                        <Entry x:DataType="vm:LoginViewModel" Text="{Binding Password}" IsPassword="True" Placeholder="••••••••" TextColor="White"/>
+                    </Border>
+                </VerticalStackLayout>
+
+                <Button Text="INICIAR SESIÓN"
+                    Command="{Binding IngresarCommand}" 
+                    BackgroundColor="{StaticResource AccentBlue}"
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    FontAttributes="Bold"/>
+
+                <Button Text="¿No tienes cuenta? Regístrate"
+                    Command="{Binding IrARegistroCommand}"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource AccentBlue}"
+                    FontSize="14"/>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>
