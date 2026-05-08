@@ -338,7 +338,7 @@
                                 
 
                                             <Button Text="CALIFICAR TALLER" 
-                                                IsVisible="{Binding TallerCalificado, Converter={toolkit:InvertedBoolConverter}}"
+                                                IsVisible="{Binding MostrarBotonCalificar}"
                                                 Command="{Binding Path=BindingContext.NavegarAResenaCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" 
                                                 CommandParameter="{Binding .}"
                                                 BackgroundColor="Transparent" 

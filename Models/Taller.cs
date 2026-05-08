@@ -105,8 +105,26 @@ namespace AutoShift.Models
             }
         }
 
-        public bool TallerCalificado { get; set; } = false;
-        public int MiCalificacion { get; set; } = 0;
+        private bool tallerCalificado = false;
+        public bool TallerCalificado
+        {
+            get => tallerCalificado;
+            set
+            {
+                SetProperty(ref tallerCalificado, value);
+                OnPropertyChanged(nameof(MostrarBotonCalificar));
+            }
+        }
+
+        private int miCalificacion = 0;
+        public int MiCalificacion
+        {
+            get => miCalificacion;
+            set => SetProperty(ref miCalificacion, value);
+        }
+
+        // Esta propiedad nos ayudará a ocultar el botón sin usar Converters complejos
+        public bool MostrarBotonCalificar => !TallerCalificado;
     }
 
 

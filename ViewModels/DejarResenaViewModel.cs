@@ -49,8 +49,10 @@ namespace AutoShift.ViewModels
                 await _firebaseService.ActualizarCalificacionTaller(SolicitudSeleccionada.TallerId, Math.Round(nuevoPromedio, 1), totalResenas);
 
                 // 4. Marcar la solicitud como calificada
+                // 4. Marcar la solicitud como calificada en la BD del cliente
                 SolicitudSeleccionada.TallerCalificado = true;
-                await _firebaseService.ActualizarSolicitudEstadoCliente(nuevaResena.ClienteId, SolicitudSeleccionada.Id, "FINALIZADO"); // O crear un método específico para actualizar TallerCalificado
+                SolicitudSeleccionada.MiCalificacion = Calificacion;
+                await _firebaseService.MarcarSolicitudComoCalificada(nuevaResena.ClienteId, SolicitudSeleccionada.Id, Calificacion);
 
                 IsBusy = false;
                 await Shell.Current.DisplayAlert("¡Gracias!", "Tu calificación ha sido enviada con éxito.", "OK");
