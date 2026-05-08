@@ -106,6 +106,7 @@ namespace AutoShift.Models
         }
 
         public bool TallerCalificado { get; set; } = false;
+        public int MiCalificacion { get; set; } = 0;
     }
 
 

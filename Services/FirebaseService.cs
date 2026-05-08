@@ -259,5 +259,20 @@ namespace AutoShift.Services
             }
             catch { return false; }
         }
+
+        public async Task<bool> MarcarSolicitudComoCalificada(string clienteId, string solicitudId, int calificacion)
+        {
+            try
+            {
+                await firebase.Child("Usuarios").Child(clienteId).Child("Solicitudes").Child(solicitudId)
+                    .PatchAsync(new
+                    {
+                        TallerCalificado = true,
+                        MiCalificacion = calificacion
+                    });
+                return true;
+            }
+            catch { return false; }
+        }
     }
 }

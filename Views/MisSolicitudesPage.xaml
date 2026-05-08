@@ -350,7 +350,13 @@
                                                 FontSize="11" 
                                                 CornerRadius="8" 
                                                 Margin="0,10,0,0"/>
-                </VerticalStackLayout>
+                                            <Border IsVisible="{Binding TallerCalificado}" BackgroundColor="#111622" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="12,10" Margin="0,10,0,0">
+                                                <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
+                                                    <Label Text="★ CALIFICASTE ESTE SERVICIO ★" TextColor="#FFB300" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                                                    <Label Text="{Binding MiCalificacion, StringFormat='Les diste {0} estrellas'}" TextColor="White" FontSize="14" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                                                </VerticalStackLayout>
+                                            </Border>
+                                        </VerticalStackLayout>
                                     </VerticalStackLayout>
                                 </Border>
                             </DataTemplate>
