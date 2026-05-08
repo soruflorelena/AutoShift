@@ -1,0 +1,66 @@
+﻿using AutoShift.Models;
+using AutoShift.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+
+namespace AutoShift.ViewModels
+{
+    [QueryProperty(nameof(SolicitudSeleccionada), "Solicitud")]
+    public partial class DejarResenaViewModel : ObservableObject
+    {
+        private readonly FirebaseService _firebaseService;
+
+        [ObservableProperty] private SolicitudServicio? solicitudSeleccionada;
+        [ObservableProperty] private int calificacion = 5;
+        [ObservableProperty] private string comentario = string.Empty;
+        [ObservableProperty] private bool isBusy;
+
+        public DejarResenaViewModel()
+        {
+            _firebaseService = new FirebaseService();
+        }
+
+        [RelayCommand]
+        private async Task EnviarResena()
+        {
+            if (SolicitudSeleccionada == null) return;
+            IsBusy = true;
+
+            var nuevaResena = new Resena
+            {
+                SolicitudId = SolicitudSeleccionada.Id,
+                ClienteId = Preferences.Get("UsuarioId", ""),
+                ClienteNombre = Preferences.Get("UsuarioNombre", "Cliente"),
+                Calificacion = Calificacion,
+                Comentario = Comentario?.Trim() ?? string.Empty
+            };
+
+            // 1. Guardar la reseña en el nodo del taller
+            bool resenaGuardada = await _firebaseService.GuardarResenaTaller(SolicitudSeleccionada.TallerId, nuevaResena);
+
+            if (resenaGuardada)
+            {
+                // 2. Obtener todas las reseñas para recalcular el promedio
+                var todasLasResenas = await _firebaseService.GetResenasTallerAsync(SolicitudSeleccionada.TallerId);
+                double nuevoPromedio = todasLasResenas.Any() ? todasLasResenas.Average(r => r.Calificacion) : Calificacion;
+                int totalResenas = todasLasResenas.Count;
+
+                // 3. Actualizar la metadata del taller
+                await _firebaseService.ActualizarCalificacionTaller(SolicitudSeleccionada.TallerId, Math.Round(nuevoPromedio, 1), totalResenas);
+
+                // 4. Marcar la solicitud como calificada
+                SolicitudSeleccionada.TallerCalificado = true;
+                await _firebaseService.ActualizarSolicitudEstadoCliente(nuevaResena.ClienteId, SolicitudSeleccionada.Id, "FINALIZADO"); // O crear un método específico para actualizar TallerCalificado
+
+                IsBusy = false;
+                await Shell.Current.DisplayAlert("¡Gracias!", "Tu calificación ha sido enviada con éxito.", "OK");
+                await Shell.Current.GoToAsync("..");
+            }
+            else
+            {
+                IsBusy = false;
+                await Shell.Current.DisplayAlert("Error", "No se pudo enviar la calificación.", "OK");
+            }
+        }
+    }
+}

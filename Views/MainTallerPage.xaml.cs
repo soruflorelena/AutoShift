@@ -19,6 +19,12 @@ namespace AutoShift.Views
             {
                 await _viewModel.InicializarDatosAsync();
             }
+
+            if (BindingContext is ViewModels.MainTallerViewModel vm)
+            {
+                // Carga las solicitudes actualizadas al volver a la pantalla principal del taller
+                await vm.CargarSolicitudesDesdeFirebase();
+            }
         }
     }
 }

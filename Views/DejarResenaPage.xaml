@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:AutoShift.ViewModels"
+             x:Class="AutoShift.Views.DejarResenaPage"
+             Title="Calificar Taller"
+             BackgroundColor="#090A0F">
+
+    <ContentPage.BindingContext>
+        <viewmodels:DejarResenaViewModel />
+    </ContentPage.BindingContext>
+
+    <ScrollView Padding="25">
+        <VerticalStackLayout Spacing="25">
+
+            <VerticalStackLayout Spacing="5">
+                <Label Text="CALIFICAR SERVICIO" TextColor="#FFB300" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
+                <Label Text="{Binding SolicitudSeleccionada.TallerNombre}" TextColor="White" FontSize="24" FontAttributes="Bold"/>
+            </VerticalStackLayout>
+
+            <Border BackgroundColor="#121622" Stroke="#1E2235" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="20">
+                <VerticalStackLayout Spacing="20">
+                    <Label Text="¿Qué te pareció el trabajo?" TextColor="White" FontSize="16" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+
+                    <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                        <Label Text="{Binding Calificacion, StringFormat='{0} Estrellas'}" TextColor="#FFB300" FontSize="22" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                        <Stepper Minimum="1" Maximum="5" Increment="1" Value="{Binding Calificacion}" BackgroundColor="#1E2235"/>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" Color="#1E2235" Margin="0,10"/>
+
+                    <Label Text="Tu comentario (Opcional)" TextColor="#6C7281" FontSize="12" FontAttributes="Bold"/>
+                    <Editor Placeholder="Escribe aquí tu experiencia..." 
+                            Text="{Binding Comentario}"
+                            HeightRequest="100"
+                            PlaceholderColor="#4F5664"
+                            TextColor="White"
+                            BackgroundColor="#0F111A"/>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="ENVIAR CALIFICACIÓN" 
+                    Command="{Binding EnviarResenaCommand}" 
+                    BackgroundColor="#FFB300" 
+                    TextColor="#090A0F" 
+                    FontAttributes="Bold" 
+                    HeightRequest="50" 
+                    CornerRadius="12"/>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#FFB300" HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

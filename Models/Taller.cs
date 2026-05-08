@@ -12,6 +12,8 @@ namespace AutoShift.Models
         public string Ubicacion { get; set; } = string.Empty;
         public string FotoUrl { get; set; } = "taller_placeholder.png";
         public List<Servicio> Servicios { get; set; } = new();
+        public double CalificacionPromedio { get; set; } = 0.0;
+        public int TotalResenas { get; set; } = 0;
     }
 
     public class SolicitudServicio : ObservableObject
@@ -102,7 +104,10 @@ namespace AutoShift.Models
                 };
             }
         }
+
+        public bool TallerCalificado { get; set; } = false;
     }
+
 
     public class Cotizacion
     {
@@ -137,5 +142,16 @@ namespace AutoShift.Models
         public string MarcasTexto => MarcasCompatibles != null && MarcasCompatibles.Any()
             ? string.Join(", ", MarcasCompatibles)
             : "Todas las marcas";
+    }
+
+    public class Resena
+    {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string SolicitudId { get; set; } = string.Empty;
+        public string ClienteId { get; set; } = string.Empty;
+        public string ClienteNombre { get; set; } = string.Empty;
+        public int Calificacion { get; set; } = 5;
+        public string Comentario { get; set; } = string.Empty;
+        public DateTime Fecha { get; set; } = DateTime.Now;
     }
 }

@@ -26,5 +26,9 @@
       Title="Main Taller"
       Route="MainTallerPage" 
       ContentTemplate="{DataTemplate views:MainTallerPage}" />
+    <ShellContent 
+      Title="Dejar Reseña"
+      Route="DejarResenaPage" 
+      ContentTemplate="{DataTemplate views:DejarResenaPage}" />
 
 </Shell>

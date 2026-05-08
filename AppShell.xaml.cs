@@ -14,6 +14,7 @@ namespace AutoShift
             Routing.RegisterRoute(nameof(Views.VehiculosPage), typeof(Views.VehiculosPage));
             Routing.RegisterRoute(nameof(Views.MisSolicitudesPage), typeof(Views.MisSolicitudesPage));
             Routing.RegisterRoute(nameof(Views.CotizacionPage), typeof(Views.CotizacionPage));
+            Routing.RegisterRoute("DejarResenaPage", typeof(Views.DejarResenaPage));
         }
     }
 }

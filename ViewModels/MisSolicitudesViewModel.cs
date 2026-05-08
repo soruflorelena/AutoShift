@@ -242,5 +242,21 @@ namespace AutoShift.ViewModels
             var guardadoCliente = await _firebaseService.GuardarSolicitudCliente(clienteId, solicitud);
             return guardadoTaller && guardadoCliente;
         }
+
+        [RelayCommand]
+        private async Task Volver()
+        {
+            // Cierra la pantalla modal o regresa a la anterior
+            await Shell.Current.GoToAsync("..");
+        }
+
+        [RelayCommand]
+        private async Task NavegarAResena(SolicitudServicio solicitud)
+        {
+            if (solicitud == null) return;
+            var parameters = new Dictionary<string, object> { { "Solicitud", solicitud } };
+            await Shell.Current.GoToAsync("DejarResenaPage", parameters);
+        }
     }
+
 }

@@ -224,5 +224,40 @@ namespace AutoShift.Services
             }
             catch { return new List<Taller>(); }
         }
+
+        // --- RESEÑAS ---
+        public async Task<bool> GuardarResenaTaller(string tallerId, Resena resena)
+        {
+            try
+            {
+                await firebase.Child("Talleres").Child(tallerId).Child("Resenas").Child(resena.Id).PutAsync(resena);
+                return true;
+            }
+            catch { return false; }
+        }
+
+        public async Task<List<Resena>> GetResenasTallerAsync(string tallerId)
+        {
+            try
+            {
+                var datos = await firebase.Child("Talleres").Child(tallerId).Child("Resenas").OnceAsync<Resena>();
+                return datos.Select(x => x.Object).ToList();
+            }
+            catch { return new List<Resena>(); }
+        }
+
+        public async Task<bool> ActualizarCalificacionTaller(string tallerId, double promedio, int total)
+        {
+            try
+            {
+                await firebase.Child("Talleres").Child(tallerId).PatchAsync(new
+                {
+                    CalificacionPromedio = promedio,
+                    TotalResenas = total
+                });
+                return true;
+            }
+            catch { return false; }
+        }
     }
 }

@@ -76,6 +76,11 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="5.0.0" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Views\DejarResenaPage.xaml.cs">
+	    <DependentUpon>DejarResenaPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
 
 	<ItemGroup>
 	  <MauiXaml Update="Views\DetalleTallerPage.xaml">
@@ -91,6 +96,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\MainTallerPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\DejarResenaPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
