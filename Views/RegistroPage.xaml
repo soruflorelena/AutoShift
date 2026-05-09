@@ -4,46 +4,159 @@
              xmlns:vm="clr-namespace:AutoShift.ViewModels;assembly=AutoShift"
              x:Class="AutoShift.Views.RegistroPage"
              x:DataType="vm:RegistroViewModel"
-             BackgroundColor="{StaticResource AppBackground}">
-    <ScrollView>
-        <VerticalStackLayout Spacing="15" Padding="25">
-            <Label Text="Registro de Cuenta" TextColor="White" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
+             BackgroundColor="#090A0F"
+             Shell.NavBarIsVisible="False">
 
-            <Border BackgroundColor="{StaticResource CardBackground}" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 20" Padding="20">
-                <VerticalStackLayout Spacing="10">
+    <ScrollView Padding="0,0,0,20">
+        <Grid Padding="25,40,25,20">
+            <VerticalStackLayout Spacing="25">
 
-                    <Entry Placeholder="Nombre(s)*" Text="{Binding Nombre}" TextColor="White"/>
-                    <Grid ColumnDefinitions="*,*">
-                        <Entry Grid.Column="0" Placeholder="Ap. Paterno*" Text="{Binding ApellidoPaterno}" TextColor="White"/>
-                        <Entry Grid.Column="1" Placeholder="Ap. Materno (Opc)" Text="{Binding ApellidoMaterno}" TextColor="White"/>
-                    </Grid>
-
-                    <Entry Placeholder="Correo Electrónico*" Text="{Binding Email}" Keyboard="Email" TextColor="White"/>
-                    <Entry Placeholder="Teléfono*" Text="{Binding Telefono}" Keyboard="Telephone" TextColor="White"/>
-
-                    <Label Text="Ubicación" TextColor="{StaticResource AccentBlue}" Margin="0,10,0,0"/>
-                    <Grid ColumnDefinitions="*, 2*">
-                        <Entry Grid.Column="0" Placeholder="C.P.*" Text="{Binding CodigoPostal}" MaxLength="5" Keyboard="Numeric" TextColor="White"/>
-                        <Entry Grid.Column="1" Placeholder="Estado" Text="{Binding Estado}" TextColor="White" IsEnabled="False"/>
-                    </Grid>
-                    <Entry Placeholder="Ciudad/Municipio" Text="{Binding Ciudad}" TextColor="White"/>
-                    <Entry Placeholder="Colonia" Text="{Binding Colonia}" TextColor="White"/>
-                    <Entry Placeholder="Calle y Número*" Text="{Binding Calle}" TextColor="White"/>
-                    <Editor Placeholder="Referencias (Ej. Portón azul, junto a farmacia...)" Text="{Binding Referencias}" AutoSize="TextChanges" BackgroundColor="{StaticResource CardBackground}" TextColor="White"/>
-
-                    <Grid ColumnDefinitions="*, Auto">
-                    <Label Text="Seguridad" TextColor="{StaticResource AccentBlue}" Margin="0,10,0,0"/>
-                        <Entry Grid.Column="0" Placeholder="Contraseña*" IsPassword="{Binding IsPasswordVisible}" Text="{Binding Password}" TextColor="White"/>
-                        <Button Grid.Column="1" Text="👁" Command="{Binding TogglePasswordVisibilityCommand}" BackgroundColor="Transparent"/>
-                    </Grid>
-                    <Entry Placeholder="Confirmar Contraseña*" IsPassword="{Binding IsPasswordVisible}" Text="{Binding ConfirmPassword}" TextColor="White"/>
-
-                    <Picker Title="Selecciona tu Rol*" ItemsSource="{Binding Roles}" SelectedItem="{Binding RolSeleccionado}" TextColor="White" TitleColor="Gray"/>
-
-                    <Button Text="CREAR CUENTA" Command="{Binding RegistrarCommand}" BackgroundColor="{StaticResource AccentBlue}" Margin="0,20,0,0" HeightRequest="50"/>
+                <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
+                    <Label Text="ÚNETE A AUTOSHIFT" TextColor="#FFB300" FontSize="24" FontAttributes="Bold" CharacterSpacing="2" HorizontalOptions="Center"/>
+                    <Label Text="Crea tu cuenta completando tus datos" TextColor="#6C7281" FontSize="13" HorizontalOptions="Center"/>
                 </VerticalStackLayout>
-            </Border>
-            <Button Text="Cancelar" Command="{Binding VolverLoginCommand}" BackgroundColor="Transparent" TextColor="{StaticResource MutedText}"/>
-        </VerticalStackLayout>
+
+                <Border BackgroundColor="#121622" Stroke="#1E2235" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="20">
+                    <VerticalStackLayout Spacing="15">
+
+                        <Label Text="DATOS PERSONALES" TextColor="#FFB300" FontSize="11" FontAttributes="Bold" CharacterSpacing="1" Margin="0,0,0,5"/>
+
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="NOMBRE(S)*" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                            <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                <Entry Placeholder="Ej. Juan" Text="{Binding Nombre}" TextColor="White" PlaceholderColor="#4F5664" BackgroundColor="Transparent"/>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                <Label Text="AP. PATERNO*" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                                <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                    <Entry Placeholder="Ej. Pérez" Text="{Binding ApellidoPaterno}" TextColor="White" PlaceholderColor="#4F5664" BackgroundColor="Transparent"/>
+                                </Frame>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="5">
+                                <Label Text="AP. MATERNO" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                                <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                    <Entry Placeholder="(Opcional)" Text="{Binding ApellidoMaterno}" TextColor="White" PlaceholderColor="#4F5664" BackgroundColor="Transparent"/>
+                                </Frame>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="#1E2235" Margin="0,5"/>
+
+                        <Label Text="CONTACTO Y CUENTA" TextColor="#FFB300" FontSize="11" FontAttributes="Bold" CharacterSpacing="1" Margin="0,5,0,5"/>
+
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="CORREO ELECTRÓNICO*" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                            <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                <Entry Placeholder="ejemplo@correo.com" Text="{Binding Email}" Keyboard="Email" TextColor="White" PlaceholderColor="#4F5664" BackgroundColor="Transparent"/>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="TELÉFONO*" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                            <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                <Entry Placeholder="10 dígitos" Text="{Binding Telefono}" Keyboard="Telephone" TextColor="White" PlaceholderColor="#4F5664" BackgroundColor="Transparent"/>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="TIPO DE CUENTA*" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                            <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="10,0" HasShadow="False" HeightRequest="45">
+                                <Picker Title="Selecciona tu rol..." ItemsSource="{Binding Roles}" SelectedItem="{Binding RolSeleccionado}" TextColor="White" TitleColor="#4F5664" BackgroundColor="Transparent"/>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <BoxView HeightRequest="1" Color="#1E2235" Margin="0,5"/>
+
+                        <Label Text="UBICACIÓN" TextColor="#FFB300" FontSize="11" FontAttributes="Bold" CharacterSpacing="1" Margin="0,5,0,5"/>
+
+                        <Grid ColumnDefinitions="*, 2*" ColumnSpacing="10">
+                            <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                <Label Text="C.P.*" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                                <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                    <Entry Placeholder="00000" Text="{Binding CodigoPostal}" MaxLength="5" Keyboard="Numeric" TextColor="White" PlaceholderColor="#4F5664" BackgroundColor="Transparent"/>
+                                </Frame>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="5">
+                                <Label Text="ESTADO" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                                <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                    <Entry Placeholder="Autocompletado" Text="{Binding Estado}" TextColor="#9EABB8" IsEnabled="False" BackgroundColor="Transparent"/>
+                                </Frame>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="CIUDAD / MUNICIPIO*" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                            <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                <Entry Text="{Binding Ciudad}" TextColor="White" BackgroundColor="Transparent"/>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="COLONIA*" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                            <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                <Entry Text="{Binding Colonia}" TextColor="White" BackgroundColor="Transparent"/>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="CALLE Y NÚMERO*" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                            <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                <Entry Text="{Binding Calle}" TextColor="White" BackgroundColor="Transparent"/>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="REFERENCIAS" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                            <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,5" HasShadow="False">
+                                <Editor Placeholder="Ej. Portón azul, junto a farmacia..." Text="{Binding Referencias}" AutoSize="TextChanges" TextColor="White" PlaceholderColor="#4F5664" BackgroundColor="Transparent"/>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <BoxView HeightRequest="1" Color="#1E2235" Margin="0,5"/>
+
+                        <Label Text="SEGURIDAD" TextColor="#FFB300" FontSize="11" FontAttributes="Bold" CharacterSpacing="1" Margin="0,5,0,5"/>
+
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="CONTRASEÑA*" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                            <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                <Grid ColumnDefinitions="*, Auto">
+                                    <Entry Grid.Column="0" Placeholder="********" IsPassword="{Binding IsPasswordVisible}" Text="{Binding Password}" TextColor="White" PlaceholderColor="#4F5664" BackgroundColor="Transparent"/>
+                                    <Button Grid.Column="1" Text="👁" Command="{Binding TogglePasswordVisibilityCommand}" BackgroundColor="Transparent" TextColor="#6C7281" FontSize="16" Padding="0" VerticalOptions="Center"/>
+                                </Grid>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="CONFIRMAR CONTRASEÑA*" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                            <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                <Entry Placeholder="********" IsPassword="{Binding IsPasswordVisible}" Text="{Binding ConfirmPassword}" TextColor="White" PlaceholderColor="#4F5664" BackgroundColor="Transparent"/>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout Spacing="15" Margin="0,10,0,0">
+                    <Button Text="CREAR CUENTA" 
+                            Command="{Binding RegistrarCommand}" 
+                            BackgroundColor="#FFB300" 
+                            TextColor="#090A0F" 
+                            FontAttributes="Bold" 
+                            HeightRequest="50" 
+                            CornerRadius="8"/>
+
+                    <Button Text="Cancelar y volver" 
+                            Command="{Binding VolverLoginCommand}" 
+                            BackgroundColor="Transparent" 
+                            TextColor="#6C7281" 
+                            FontAttributes="Bold"
+                            FontSize="14"/>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </Grid>
     </ScrollView>
 </ContentPage>

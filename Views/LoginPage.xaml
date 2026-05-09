@@ -1,57 +1,64 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ContentPage
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:vm="clr-namespace:AutoShift.ViewModels"
-    x:Class="AutoShift.Views.LoginPage"
-    x:DataType="vm:LoginViewModel"
-    BackgroundColor="{StaticResource AppBackground}">
-    <Grid RowDefinitions="35*, 65*" BackgroundColor="{StaticResource AppBackground}">
-        <VerticalStackLayout Grid.Row="0" VerticalOptions="Center" Spacing="0">
-            <Label Text="AUTO" FontSize="48" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center"/>
-            <Label Text="SHIFT" FontSize="48" FontAttributes="Bold" TextColor="{StaticResource AccentBlue}" HorizontalTextAlignment="Center" Margin="0,-15,0,0"/>
-            <BoxView HeightRequest="2" WidthRequest="50" Color="{StaticResource AccentBlue}" HorizontalOptions="Center" Margin="0,10"/>
-        </VerticalStackLayout>
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:AutoShift.ViewModels"
+             x:Class="AutoShift.Views.LoginPage"
+             BackgroundColor="#090A0F"
+             Shell.NavBarIsVisible="False">
 
-        <Border Grid.Row="1" 
-            Margin="20,0,20,20" 
-            Padding="30" 
-            BackgroundColor="{StaticResource CardBackground}"
-            Stroke="{StaticResource CardBorder}"
-            StrokeShape="RoundRectangle 30"
-            VerticalOptions="Start">
+    <ContentPage.BindingContext>
+        <viewmodels:LoginViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid Padding="30" VerticalOptions="Center">
+        <VerticalStackLayout Spacing="30">
+
+            <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
+                <Label Text="AUTOSHIFT" TextColor="#FFB300" FontSize="32" FontAttributes="Bold" CharacterSpacing="2" HorizontalOptions="Center"/>
+                <Label Text="Inicia sesión para continuar" TextColor="#6C7281" FontSize="14" HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+
+            <Border BackgroundColor="#121622" Stroke="#1E2235" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="20">
+                <VerticalStackLayout Spacing="20">
+
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="CORREO ELECTRÓNICO" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                        <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="48">
+                            <Entry Placeholder="ejemplo@correo.com" Text="{Binding Email}" TextColor="White" PlaceholderColor="#4F5664" Keyboard="Email" BackgroundColor="Transparent"/>
+                        </Frame>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="CONTRASEÑA" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                        <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="48">
+                            <Entry Placeholder="********" Text="{Binding Password}" TextColor="White" PlaceholderColor="#4F5664" IsPassword="True" BackgroundColor="Transparent"/>
+                        </Frame>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </Border>
 
             <VerticalStackLayout Spacing="20">
-                <Label Text="Bienvenido de nuevo" FontSize="22" FontAttributes="Bold" TextColor="White" Margin="0,0,0,10"/>
+                <Button Text="INGRESAR" 
+                        Command="{Binding IngresarCommand}" 
+                        BackgroundColor="#FFB300" 
+                        TextColor="#090A0F" 
+                        FontAttributes="Bold" 
+                        HeightRequest="50" 
+                        CornerRadius="8"/>
 
-                <VerticalStackLayout Spacing="5">
-                    <Label Text="Correo Electrónico" TextColor="{StaticResource AccentBlueBrush}" FontSize="12" Margin="5,0"/>
-                    <Border Stroke="{StaticResource CardBorder}" BackgroundColor="{StaticResource CardBackground}" StrokeShape="RoundRectangle 12">
-                        <Entry x:DataType="vm:LoginViewModel" Text="{Binding Email}" Placeholder="ejemplo@correo.com" TextColor="White" Keyboard="Email"/>
-                    </Border>
-                </VerticalStackLayout>
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#FFB300" HorizontalOptions="Center"/>
 
-                <VerticalStackLayout Spacing="5">
-                    <Label Text="Contraseña" TextColor="{StaticResource AccentBlueBrush}" FontSize="12" Margin="5,0"/>
-                    <Border Stroke="{StaticResource CardBorder}" BackgroundColor="{StaticResource CardBackground}" StrokeShape="RoundRectangle 12">
-                        <Entry x:DataType="vm:LoginViewModel" Text="{Binding Password}" IsPassword="True" Placeholder="••••••••" TextColor="White"/>
-                    </Border>
-                </VerticalStackLayout>
-
-                <Button Text="INICIAR SESIÓN"
-                    Command="{Binding IngresarCommand}" 
-                    BackgroundColor="{StaticResource AccentBlue}"
-                    TextColor="White"
-                    HeightRequest="50"
-                    CornerRadius="25"
-                    FontAttributes="Bold"/>
-
-                <Button Text="¿No tienes cuenta? Regístrate"
-                    Command="{Binding IrARegistroCommand}"
-                    BackgroundColor="Transparent"
-                    TextColor="{StaticResource AccentBlue}"
-                    FontSize="14"/>
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
+                    <Label Text="¿No tienes cuenta?" TextColor="#6C7281" VerticalOptions="Center"/>
+                    <Label Text="Regístrate" TextColor="#FFB300" FontAttributes="Bold" VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding IrARegistroCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
             </VerticalStackLayout>
-        </Border>
+
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>
