@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using AutoShift.Models;
 using AutoShift.Services;
+using CommunityToolkit.Maui.Views;
+using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {
@@ -189,7 +191,8 @@ namespace AutoShift.ViewModels
         [RelayCommand]
         private async Task EliminarServicio(Servicio s)
         {
-            bool confirm = await Shell.Current.DisplayAlert("Eliminar", "¿Borrar?", "Sí", "No");
+            var resultat = await Application.Current.MainPage.ShowPopupAsync(new CustomConfirmPopup("Eliminar", "¿Borrar?"));
+            bool confirm = resultat is bool val && val;
             if (confirm && await _firebaseService.EliminarServicioAsync(_tallerId, s.Id))
                 MisServicios.Remove(s);
         }

@@ -3,6 +3,8 @@ using AutoShift.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using CommunityToolkit.Maui.Views;
+using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {
@@ -66,13 +68,13 @@ namespace AutoShift.ViewModels
             if (string.IsNullOrWhiteSpace(Marca) || string.IsNullOrWhiteSpace(Modelo) ||
                 string.IsNullOrWhiteSpace(Anio) || string.IsNullOrWhiteSpace(Placas))
             {
-                await Shell.Current.DisplayAlert("Error", "Por favor completa todos los campos del vehículo.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "Por favor completa todos los campos del vehículo."));
                 return;
             }
 
             if (!int.TryParse(Anio, out var anioValue) || anioValue < 1900)
             {
-                await Shell.Current.DisplayAlert("Error", "Ingresa un año válido para el vehículo.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "Ingresa un año válido para el vehículo."));
                 return;
             }
 
@@ -80,7 +82,7 @@ namespace AutoShift.ViewModels
             var clienteNombre = Preferences.Get("UsuarioNombre", "Cliente");
             if (string.IsNullOrWhiteSpace(clienteId))
             {
-                await Shell.Current.DisplayAlert("Error", "No se encontró la sesión del cliente.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se encontró la sesión del cliente."));
                 return;
             }
 
@@ -99,11 +101,11 @@ namespace AutoShift.ViewModels
             {
                 await CargarVehiculos();
                 LimpiarCampos();
-                await Shell.Current.DisplayAlert("Éxito", "Vehículo registrado correctamente.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Vehículo registrado correctamente."));
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo guardar el vehículo. Revisa tu conexión.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo guardar el vehículo. Revisa tu conexión."));
             }
         }
 
@@ -113,11 +115,12 @@ namespace AutoShift.ViewModels
             var elegido = vehiculo ?? VehiculoSeleccionado;
             if (elegido == null)
             {
-                await Shell.Current.DisplayAlert("Aviso", "Selecciona un vehículo para eliminar.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Aviso", "Selecciona un vehículo para eliminar."));
                 return;
             }
 
-            var confirm = await Shell.Current.DisplayAlert("Confirmar", $"¿Eliminar {elegido.Descripcion}?", "Sí", "No");
+            var resultat = await Application.Current.MainPage.ShowPopupAsync(new CustomConfirmPopup("Confirmar", $"¿Eliminar {elegido.Descripcion}?"));
+            bool confirm = resultat is bool val && val;
             if (!confirm) return;
 
             var clienteId = Preferences.Get("UsuarioId", "");
@@ -130,11 +133,11 @@ namespace AutoShift.ViewModels
                 {
                     VehiculoSeleccionado = null;
                 }
-                await Shell.Current.DisplayAlert("Éxito", "Vehículo eliminado.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Vehículo eliminado."));
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo eliminar el vehículo. Revisa tu conexión.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo eliminar el vehículo. Revisa tu conexión."));
             }
         }
 
@@ -143,20 +146,20 @@ namespace AutoShift.ViewModels
         {
             if (VehiculoSeleccionado == null)
             {
-                await Shell.Current.DisplayAlert("Error", "Selecciona el vehículo que deseas editar.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "Selecciona el vehículo que deseas editar."));
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(Marca) || string.IsNullOrWhiteSpace(Modelo) ||
                 string.IsNullOrWhiteSpace(Anio) || string.IsNullOrWhiteSpace(Placas))
             {
-                await Shell.Current.DisplayAlert("Error", "Por favor completa todos los campos del vehículo.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "Por favor completa todos los campos del vehículo."));
                 return;
             }
 
             if (!int.TryParse(Anio, out var anioValue) || anioValue < 1900)
             {
-                await Shell.Current.DisplayAlert("Error", "Ingresa un año válido para el vehículo.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "Ingresa un año válido para el vehículo."));
                 return;
             }
 
@@ -168,7 +171,7 @@ namespace AutoShift.ViewModels
             var clienteId = Preferences.Get("UsuarioId", "");
             if (string.IsNullOrWhiteSpace(clienteId))
             {
-                await Shell.Current.DisplayAlert("Error", "No se encontró la sesión del cliente.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se encontró la sesión del cliente."));
                 return;
             }
 
@@ -176,11 +179,11 @@ namespace AutoShift.ViewModels
             {
                 await CargarVehiculos();
                 VehiculoSeleccionado = null;
-                await Shell.Current.DisplayAlert("Éxito", "Vehículo actualizado correctamente.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Vehículo actualizado correctamente."));
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo actualizar el vehículo. Revisa tu conexión.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo actualizar el vehículo. Revisa tu conexión."));
             }
         }
 

@@ -1,9 +1,13 @@
 using AutoShift.Models;
 using AutoShift.Services;
+using AutoShift.Views;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using CommunityToolkit.Maui.Views;
+using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {
@@ -58,19 +62,19 @@ namespace AutoShift.ViewModels
         {
             if (string.IsNullOrWhiteSpace(NuevoDetalleNombre))
             {
-                await Shell.Current.DisplayAlert("Error", "Proporciona un nombre para el servicio.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "Proporciona un nombre para el servicio."));
                 return;
             }
 
             if (!decimal.TryParse(NuevoDetallePrecio, NumberStyles.Any, CultureInfo.InvariantCulture, out var precio) || precio <= 0)
             {
-                await Shell.Current.DisplayAlert("Error", "Ingresa un precio válido.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "Ingresa un precio válido."));
                 return;
             }
 
             if (!int.TryParse(NuevoDetalleCantidad, out var cantidad) || cantidad <= 0)
             {
-                await Shell.Current.DisplayAlert("Error", "Ingresa una cantidad válida.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "Ingresa una cantidad válida."));
                 return;
             }
 
@@ -112,13 +116,13 @@ namespace AutoShift.ViewModels
         {
             if (SolicitudSeleccionada == null)
             {
-                await Shell.Current.DisplayAlert("Error", "No se encontró la solicitud.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se encontró la solicitud."));
                 return;
             }
 
             if (Detalles.Count == 0)
             {
-                await Shell.Current.DisplayAlert("Error", "Agrega al menos un servicio a la cotización.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "Agrega al menos un servicio a la cotización."));
                 return;
             }
 
@@ -138,12 +142,12 @@ namespace AutoShift.ViewModels
 
             if (guardado)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Cotización enviada al cliente.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Cotización enviada al cliente."));
                 await Shell.Current.GoToAsync("..", true);
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo enviar la cotización. Intenta de nuevo.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo enviar la cotización. Intenta de nuevo."));
             }
         }
 
@@ -159,12 +163,12 @@ namespace AutoShift.ViewModels
             var guardado = await GuardarSolicitudAsync();
             if (guardado)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Se registró que el taller necesita inspección física.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Se registró que el taller necesita inspección física."));
                 await Shell.Current.GoToAsync("..", true);
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo actualizar la solicitud.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo actualizar la solicitud."));
             }
         }
 
@@ -181,12 +185,12 @@ namespace AutoShift.ViewModels
             var guardado = await GuardarSolicitudAsync();
             if (guardado)
             {
-                await Shell.Current.DisplayAlert("Éxito", "La cita ha sido agendada.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "La cita ha sido agendada."));
                 await Shell.Current.GoToAsync("..", true);
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo agendar la cita.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo agendar la cita."));
             }
         }
 
@@ -200,12 +204,12 @@ namespace AutoShift.ViewModels
             var guardado = await GuardarSolicitudAsync();
             if (guardado)
             {
-                await Shell.Current.DisplayAlert("Éxito", "La solicitud se encuentra en proceso.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "La solicitud se encuentra en proceso."));
                 await Shell.Current.GoToAsync("..", true);
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo actualizar el estado.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo actualizar el estado."));
             }
         }
 
@@ -219,12 +223,12 @@ namespace AutoShift.ViewModels
             var guardado = await GuardarSolicitudAsync();
             if (guardado)
             {
-                await Shell.Current.DisplayAlert("Éxito", "La solicitud ha sido finalizada.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "La solicitud ha sido finalizada."));
                 await Shell.Current.GoToAsync("..", true);
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo finalizar la solicitud.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo finalizar la solicitud."));
             }
         }
 
@@ -241,12 +245,12 @@ namespace AutoShift.ViewModels
             var guardado = await GuardarSolicitudAsync();
             if (guardado)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Fecha propuesta al cliente.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Fecha propuesta al cliente."));
                 await Shell.Current.GoToAsync("..", true);
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo proponer la fecha.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo proponer la fecha."));
             }
         }
 
@@ -265,12 +269,12 @@ namespace AutoShift.ViewModels
 
             if (guardadoTaller && guardadoCliente)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Fecha validada.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Fecha validada."));
                 // Recargar o notificar
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo validar la fecha.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo validar la fecha."));
             }
         }
 
@@ -284,12 +288,12 @@ namespace AutoShift.ViewModels
             var guardado = await GuardarSolicitudAsync();
             if (guardado)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Inspección marcada como realizada.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Inspección marcada como realizada."));
                 await Shell.Current.GoToAsync("..", true);
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo actualizar el estado.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo actualizar el estado."));
             }
         }
     }

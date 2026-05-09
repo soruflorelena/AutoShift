@@ -1,8 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using AutoShift.Models;
+using AutoShift.Services;
+using AutoShift.Views;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using AutoShift.Models;
-using AutoShift.Services;
+using System.Collections.ObjectModel;
+using CommunityToolkit.Maui.Views;
+using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {
@@ -35,7 +39,7 @@ namespace AutoShift.ViewModels
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", ex.Message));
             }
             finally { IsBusy = false; }
         }

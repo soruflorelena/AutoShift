@@ -2,6 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using AutoShift.Services;
 using AutoShift.Models;
+using CommunityToolkit.Maui.Views;
+using AutoShift.Views;
+
 
 namespace AutoShift.ViewModels
 {
@@ -24,7 +27,7 @@ namespace AutoShift.ViewModels
             // 1. Validación básica
             if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
             {
-                await Shell.Current.DisplayAlert("Atención", "Por favor ingresa tus credenciales.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Atención", "Por favor ingresa tus credenciales."));
                 return;
             }
 
@@ -54,17 +57,20 @@ namespace AutoShift.ViewModels
                 }
                 else
                 {
-                    await Shell.Current.DisplayAlert("Error", "Correo o contraseña incorrectos.", "OK");
+                    await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "Correo o contraseña incorrectos."));
                 }
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error de Conexión", ex.Message, "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error de Conexión", ex.Message));
             }
             finally
             {
                 IsBusy = false;
             }
+
+            Email = string.Empty;
+            Password = string.Empty;
         }
 
         [RelayCommand]

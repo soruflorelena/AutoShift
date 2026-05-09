@@ -1,8 +1,12 @@
 using AutoShift.Models;
 using AutoShift.Services;
+using AutoShift.Views;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using CommunityToolkit.Maui.Views;
+using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {
@@ -89,12 +93,12 @@ namespace AutoShift.ViewModels
 
             if (ok)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Has aceptado la cotización. El taller coordinará una cita.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Has aceptado la cotización. El taller coordinará una cita."));
                 await CargarSolicitudes();
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo actualizar el estado de la solicitud.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo actualizar el estado de la solicitud."));
             }
         }
 
@@ -108,12 +112,12 @@ namespace AutoShift.ViewModels
 
             if (ok)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Has rechazado la cotización. La solicitud ha finalizado.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Has rechazado la cotización. La solicitud ha finalizado."));
                 await CargarSolicitudes();
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo actualizar el estado de la solicitud.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo actualizar el estado de la solicitud."));
             }
         }
 
@@ -127,12 +131,12 @@ namespace AutoShift.ViewModels
 
             if (ok)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Has marcado la reparación como completada.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Has marcado la reparación como completada."));
                 await CargarSolicitudes();
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo actualizar el estado de la solicitud.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo actualizar el estado de la solicitud."));
             }
         }
 
@@ -146,12 +150,12 @@ namespace AutoShift.ViewModels
 
             if (ok)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Has aceptado la solicitud de inspección.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Has aceptado la solicitud de inspección."));
                 await CargarSolicitudes();
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo actualizar el estado de la solicitud.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo actualizar el estado de la solicitud."));
             }
         }
 
@@ -165,12 +169,12 @@ namespace AutoShift.ViewModels
 
             if (ok)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Has rechazado la solicitud de inspección. La solicitud ha finalizado.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Has rechazado la solicitud de inspección. La solicitud ha finalizado."));
                 await CargarSolicitudes();
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo actualizar el estado de la solicitud.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo actualizar el estado de la solicitud."));
             }
         }
 
@@ -185,12 +189,12 @@ namespace AutoShift.ViewModels
 
             if (ok)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Has aceptado la fecha propuesta.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Has aceptado la fecha propuesta."));
                 await CargarSolicitudes();
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo actualizar el estado de la solicitud.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo actualizar el estado de la solicitud."));
             }
         }
 
@@ -204,12 +208,12 @@ namespace AutoShift.ViewModels
 
             if (ok)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Has rechazado la fecha propuesta. Ahora puedes proponer fechas alternativas.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Has rechazado la fecha propuesta. Ahora puedes proponer fechas alternativas."));
                 await CargarSolicitudes();
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo actualizar el estado de la solicitud.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo actualizar el estado de la solicitud."));
             }
         }
 
@@ -226,12 +230,12 @@ namespace AutoShift.ViewModels
 
             if (ok)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Has propuesto fechas alternativas.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Has propuesto fechas alternativas."));
                 await CargarSolicitudes();
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo actualizar el estado de la solicitud.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo actualizar el estado de la solicitud."));
             }
         }
 

@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using AutoShift.Models;
+﻿using AutoShift.Models;
 using AutoShift.Services;
+using AutoShift.Views;
+using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 
 namespace AutoShift.ViewModels
@@ -26,7 +28,7 @@ namespace AutoShift.ViewModels
         {
             if (string.IsNullOrWhiteSpace(Sintomas) || Sintomas.Length < 10)
             {
-                await Shell.Current.DisplayAlert("IA AutoShift", "Por favor, describa con más tecnicismos o detalle su problema para un análisis profesional.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("IA AutoShift", "Por favor, describa con más tecnicismos o detalle su problema para un análisis profesional."));
                 return;
             }
 
@@ -67,7 +69,7 @@ namespace AutoShift.ViewModels
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error de Sistema", ex.Message, "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error de Sistema", ex.Message));
             }
             finally
             {

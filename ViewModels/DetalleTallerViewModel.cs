@@ -1,8 +1,12 @@
 ﻿using AutoShift.Models;
 using AutoShift.Services;
+using AutoShift.Views;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using CommunityToolkit.Maui.Views;
+using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {
@@ -78,19 +82,19 @@ namespace AutoShift.ViewModels
         {
             if (Subtotal == 0)
             {
-                await Shell.Current.DisplayAlert("Aviso", "Selecciona al menos un servicio", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Aviso", "Selecciona al menos un servicio"));
                 return;
             }
 
             if (Vehiculos.Count > 0 && VehiculoSeleccionado == null)
             {
-                await Shell.Current.DisplayAlert("Aviso", "Selecciona un vehículo o ve al administrador de vehículos.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Aviso", "Selecciona un vehículo o ve al administrador de vehículos."));
                 return;
             }
 
             if (TallerSeleccionado == null)
             {
-                await Shell.Current.DisplayAlert("Error", "No se encontró el taller seleccionado.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se encontró el taller seleccionado."));
                 return;
             }
 
@@ -126,12 +130,12 @@ namespace AutoShift.ViewModels
 
             if (guardadoTaller && guardadoCliente)
             {
-                await Shell.Current.DisplayAlert("Éxito", "Solicitud enviada al taller. Espera su respuesta.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Solicitud enviada al taller. Espera su respuesta."));
                 await Shell.Current.GoToAsync("..");
             }
             else
             {
-                await Shell.Current.DisplayAlert("Error", "No se pudo enviar la solicitud. Revisa tu conexión e inténtalo de nuevo.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo enviar la solicitud. Revisa tu conexión e inténtalo de nuevo."));
             }
         }
 

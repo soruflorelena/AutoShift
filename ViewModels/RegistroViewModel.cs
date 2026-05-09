@@ -3,6 +3,8 @@ using AutoShift.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Text.Json;
+using CommunityToolkit.Maui.Views;
+using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {
@@ -66,13 +68,13 @@ namespace AutoShift.ViewModels
                 string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password) ||
                 string.IsNullOrWhiteSpace(RolSeleccionado) || string.IsNullOrWhiteSpace(Calle))
             {
-                await Shell.Current.DisplayAlert("Error", "Faltan campos obligatorios", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "Faltan campos obligatorios"));
                 return;
             }
 
             if (Password != ConfirmPassword)
             {
-                await Shell.Current.DisplayAlert("Error", "Las contraseñas no coinciden", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "Las contraseñas no coinciden"));
                 return;
             }
 
@@ -95,7 +97,7 @@ namespace AutoShift.ViewModels
 
             if (await _firebaseService.RegistrarUsuario(user))
             {
-                await Shell.Current.DisplayAlert("Éxito", "Usuario registrado", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Usuario registrado"));
                 await Shell.Current.GoToAsync("//LoginPage");
             }
         }

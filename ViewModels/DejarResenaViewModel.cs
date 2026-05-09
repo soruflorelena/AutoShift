@@ -1,7 +1,11 @@
 ﻿using AutoShift.Models;
 using AutoShift.Services;
+using AutoShift.Views;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Maui.Views;
+using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {
@@ -55,13 +59,13 @@ namespace AutoShift.ViewModels
                 await _firebaseService.MarcarSolicitudComoCalificada(nuevaResena.ClienteId, SolicitudSeleccionada.Id, Calificacion);
 
                 IsBusy = false;
-                await Shell.Current.DisplayAlert("¡Gracias!", "Tu calificación ha sido enviada con éxito.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("¡Gracias!", "Tu calificación ha sido enviada con éxito."));
                 await Shell.Current.GoToAsync("..");
             }
             else
             {
                 IsBusy = false;
-                await Shell.Current.DisplayAlert("Error", "No se pudo enviar la calificación.", "OK");
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "No se pudo enviar la calificación."));
             }
         }
     }
