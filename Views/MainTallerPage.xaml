@@ -204,88 +204,129 @@
 
                 <VerticalStackLayout IsVisible="{Binding IsServiciosVisible}" Spacing="24">
 
-                    <Border BackgroundColor="#15191E" Stroke="#222831" StrokeThickness="1" StrokeShape="RoundRectangle 20" Padding="20">
-                        <VerticalStackLayout Spacing="16">
-                            <Label Text="AGREGAR NUEVO SERVICIO" TextColor="#FFB01F" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5"/>
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="AGREGAR NUEVO SERVICIO" TextColor="#FFB300" FontSize="11" FontAttributes="Bold" CharacterSpacing="1"/>
+                        <Border BackgroundColor="#121622" Stroke="#1E2235" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="20">
+                            <VerticalStackLayout Spacing="15">
 
-                            <VerticalStackLayout Spacing="6">
-                                <Label Text="Nombre del servicio" TextColor="#8899A6" FontSize="11" FontAttributes="Bold"/>
-                                <Border BackgroundColor="#0F1216" Stroke="#222831" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="12,4">
-                                    <Entry Text="{Binding NuevoNombre}" Placeholder="Ej. Afinación Mayor" PlaceholderColor="#4F5664" TextColor="White" BackgroundColor="Transparent"/>
-                                </Border>
-                            </VerticalStackLayout>
-
-                            <VerticalStackLayout Spacing="6">
-                                <Label Text="Descripción" TextColor="#8899A6" FontSize="11" FontAttributes="Bold"/>
-                                <Border BackgroundColor="#0F1216" Stroke="#222831" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="12,4">
-                                    <Editor Text="{Binding NuevaDescripcion}" Placeholder="Escribe una breve descripción del servicio..." PlaceholderColor="#4F5664" TextColor="White" HeightRequest="70" BackgroundColor="Transparent"/>
-                                </Border>
-                            </VerticalStackLayout>
-
-                            <Grid ColumnDefinitions="*, *" ColumnSpacing="12">
-                                <VerticalStackLayout Spacing="6">
-                                    <Label Text="Precio base" TextColor="#8899A6" FontSize="11" FontAttributes="Bold"/>
-                                    <Border BackgroundColor="#0F1216" Stroke="#222831" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="12,4">
-                                        <Entry Text="{Binding NuevoPrecio, Mode=TwoWay}" Keyboard="Numeric" Placeholder="$ 0.00" PlaceholderColor="#4F5664" TextColor="White" BackgroundColor="Transparent"/>
-                                    </Border>
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="NOMBRE DEL SERVICIO*" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                                    <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                        <Entry Placeholder="Ej. Cambio de Aceite" Text="{Binding NuevoNombre}" TextColor="White" PlaceholderColor="#4F5664" BackgroundColor="Transparent"/>
+                                    </Frame>
                                 </VerticalStackLayout>
 
-                                <VerticalStackLayout Grid.Column="1" Spacing="6">
-                                    <Label Text="Marcas compatibles" TextColor="#8899A6" FontSize="11" FontAttributes="Bold"/>
-                                    <Border BackgroundColor="#0F1216" Stroke="#222831" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="12,4">
-                                        <Entry Text="{Binding NuevasMarcas}" Placeholder="Ej. Multimarca, Ford..." PlaceholderColor="#4F5664" TextColor="White" BackgroundColor="Transparent"/>
-                                    </Border>
+                                <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                        <Label Text="PRECIO BASE ($)*" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                                        <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                            <Entry Placeholder="0.00" Text="{Binding NuevoPrecio}" Keyboard="Numeric" TextColor="White" PlaceholderColor="#4F5664" BackgroundColor="Transparent"/>
+                                        </Frame>
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Column="1" Spacing="5">
+                                        <Label Text="MARCAS COMPATIBLES" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                                        <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,0" HasShadow="False" HeightRequest="45">
+                                            <Entry Placeholder="Ej. Ford, Nissan..." Text="{Binding NuevasMarcas}" TextColor="White" PlaceholderColor="#4F5664" BackgroundColor="Transparent"/>
+                                        </Frame>
+                                    </VerticalStackLayout>
+                                </Grid>
+
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="DESCRIPCIÓN" TextColor="#6C7281" FontSize="10" FontAttributes="Bold"/>
+                                    <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="15,5" HasShadow="False">
+                                        <Editor Placeholder="Breve descripción del servicio..." Text="{Binding NuevaDescripcion}" AutoSize="TextChanges" TextColor="White" PlaceholderColor="#4F5664" BackgroundColor="Transparent"/>
+                                    </Frame>
                                 </VerticalStackLayout>
-                            </Grid>
 
-                            <Button Text="{Binding TextoBotonGuardar}" Command="{Binding GuardarServicioCommand}" 
-                                    BackgroundColor="#FFB01F" TextColor="#0F141C" FontSize="13" FontAttributes="Bold" CornerRadius="10" HeightRequest="45" Margin="0,8,0,0"/>
-                        </VerticalStackLayout>
-                    </Border>
+                                <Button Text="{Binding TextoBotonGuardar}" Command="{Binding GuardarServicioCommand}" 
+                                        BackgroundColor="#FFB300" TextColor="#090A0F" FontAttributes="Bold" HeightRequest="45" CornerRadius="8" Margin="0,10,0,0"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
 
-                    <Label Text="SERVICIOS REGISTRADOS" TextColor="#5B7083" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5"/>
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label Text="SERVICIOS REGISTRADOS" TextColor="#FFB300" FontSize="11" FontAttributes="Bold" CharacterSpacing="1"/>
+                            <BoxView Grid.Column="1" HeightRequest="1" Color="#1E2235" WidthRequest="150" VerticalOptions="Center" Margin="10,0,0,0"/>
+                        </Grid>
 
-                    <CollectionView ItemsSource="{Binding MisServicios}" SelectionMode="None">
-                        <CollectionView.EmptyView>
-                            <Label Text="No hay servicios registrados todavía." TextColor="#5B7083" HorizontalTextAlignment="Center" Margin="0,10"/>
-                        </CollectionView.EmptyView>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="models:Servicio">
-                                <Border BackgroundColor="#15191E" Stroke="#222831" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="20" Margin="0,0,0,14">
-                                    <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" RowSpacing="10">
+                        <CollectionView ItemsSource="{Binding MisServicios}" SelectionMode="None">
+                            <CollectionView.EmptyView>
+                                <Label Text="No hay servicios registrados todavía." 
+               TextColor="#5B7083" 
+               HorizontalTextAlignment="Center" 
+               Margin="0,20"/>
+                            </CollectionView.EmptyView>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:Servicio">
 
-                                        <Grid ColumnDefinitions="*, Auto" Grid.Row="0">
-                                            <Label Text="{Binding Nombre}" TextColor="White" FontAttributes="Bold" FontSize="17" VerticalOptions="Center"/>
-                                            <Label Grid.Column="1" Text="{Binding PrecioBase, StringFormat='${0:F2}'}" TextColor="#10B981" FontAttributes="Bold" FontSize="17" VerticalOptions="Center"/>
-                                        </Grid>
+                                    <SwipeView Margin="0,0,0,14">
 
-                                        <Label Grid.Row="1" Text="{Binding Descripcion}" TextColor="#CBD5E1" FontSize="13" LineBreakMode="WordWrap" LineHeight="1.2"/>
+                                        <SwipeView.RightItems>
+                                            <SwipeItems Mode="Reveal">
+                                                <SwipeItem Text="Editar" 
+                                   BackgroundColor="#1A1D23"
+                                   Command="{Binding Path=BindingContext.PrepararEdicionCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" 
+                                   CommandParameter="{Binding .}" />
 
-                                        <HorizontalStackLayout Grid.Row="2" Spacing="6" VerticalOptions="Center">
-                                            <Border BackgroundColor="#1E232B" StrokeThickness="0" Padding="8,4" StrokeShape="RoundRectangle 6">
-                                                <HorizontalStackLayout Spacing="4">
-                                                    <Label Text="COMPATIBILIDAD:" TextColor="#8899A6" FontSize="9" FontAttributes="Bold" VerticalOptions="Center"/>
-                                                    <Label Text="{Binding MarcasTexto}" TextColor="White" FontSize="10" FontAttributes="Bold" VerticalOptions="Center"/>
-                                                </HorizontalStackLayout>
-                                            </Border>
-                                        </HorizontalStackLayout>
+                                                <SwipeItem Text="Eliminar" 
+                                   BackgroundColor="#EF4444" 
+                                   Command="{Binding Path=BindingContext.EliminarServicioCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" 
+                                   CommandParameter="{Binding .}" />
+                                            </SwipeItems>
+                                        </SwipeView.RightItems>
 
-                                        <BoxView Grid.Row="3" HeightRequest="1" Color="#222831" Margin="0,5,0,0"/>
+                                        <Border BackgroundColor="#121622" 
+                        Stroke="#1E2235" 
+                        StrokeThickness="1" 
+                        StrokeShape="RoundRectangle 14" 
+                        Padding="18">
+                                            <Grid RowDefinitions="Auto, Auto" RowSpacing="12">
 
-                                        <Grid Grid.Row="4" ColumnDefinitions="*, Auto">
-                                            <HorizontalStackLayout Grid.Column="1" Spacing="10" HorizontalOptions="End">
-                                                <Button Text="EDITAR" Command="{Binding Path=BindingContext.PrepararEdicionCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" 
-                                    BackgroundColor="#1B2735" TextColor="#3B82F6" FontSize="11" FontAttributes="Bold" CornerRadius="8" HeightRequest="34" WidthRequest="90"/>
-                                                <Button Text="ELIMINAR" Command="{Binding Path=BindingContext.EliminarServicioCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" 
-                                    BackgroundColor="#2A1A1C" TextColor="#EF4444" FontSize="11" FontAttributes="Bold" CornerRadius="8" HeightRequest="34" WidthRequest="90"/>
-                                            </HorizontalStackLayout>
-                                        </Grid>
+                                                <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                                                    <Label Text="{Binding Nombre}" 
+                                   TextColor="White" 
+                                   FontAttributes="Bold" 
+                                   FontSize="16" 
+                                   VerticalOptions="Center"/>
+                                                    <Label Grid.Column="1" 
+                                   Text="{Binding PrecioBase, StringFormat='${0:F2}'}" 
+                                   TextColor="#22C55E" 
+                                   FontAttributes="Bold" 
+                                   FontSize="16" 
+                                   VerticalOptions="Center"/>
+                                                </Grid>
 
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                                                <VerticalStackLayout Grid.Row="1" Spacing="6">
+                                                    <Label Text="{Binding Descripcion}" 
+                                   TextColor="#9EABB8" 
+                                   FontSize="13" 
+                                   LineBreakMode="WordWrap" 
+                                   LineHeight="1.2"/>
+
+                                                    <HorizontalStackLayout Spacing="6" VerticalOptions="Center" Margin="0,4,0,0">
+                                                        <Label Text="COMPATIBILIDAD:" 
+                                       TextColor="#6C7281" 
+                                       FontSize="9" 
+                                       FontAttributes="Bold" 
+                                       VerticalOptions="Center"/>
+                                                        <Label Text="{Binding MarcasTexto}" 
+                                       TextColor="#FFB300" 
+                                       FontSize="10" 
+                                       FontAttributes="Bold" 
+                                       VerticalOptions="Center"/>
+                                                    </HorizontalStackLayout>
+                                                </VerticalStackLayout>
+                                            </Grid>
+                                        </Border>
+
+                                    </SwipeView>
+
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
                 </VerticalStackLayout>
 
             </VerticalStackLayout>
