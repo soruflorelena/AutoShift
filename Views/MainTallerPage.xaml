@@ -183,7 +183,9 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:SolicitudServicio">
                                 <Border BackgroundColor="#15191E" Stroke="#222831" StrokeThickness="1" Margin="0,0,0,12" Padding="18" StrokeShape="RoundRectangle 16">
-                                    <Grid RowDefinitions="Auto, Auto">
+
+                                    <Grid RowDefinitions="Auto, Auto, Auto">
+
                                         <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
                                             <VerticalStackLayout Spacing="2">
                                                 <Label Text="{Binding VehiculoInfo}" TextColor="White" FontSize="16" FontAttributes="Bold"/>
@@ -193,7 +195,16 @@
                                                 <Label Text="{Binding EstadoTexto}" TextColor="#10B981" FontSize="10" FontAttributes="Bold"/>
                                             </Border>
                                         </Grid>
-                                        <Label Grid.Row="1" Text="{Binding DescripcionProblema}" TextColor="#CBD5E1" Margin="0,12,0,0" FontSize="14" LineHeight="1.2"/>
+
+                                        <Label Grid.Row="1" Text="{Binding DescripcionProblema}" TextColor="#E5E7EB" Margin="0,12,0,0" FontSize="14" LineHeight="1.2"/>
+
+                                        <Border Grid.Row="2" IsVisible="{Binding TallerCalificado}" BackgroundColor="#1E2235" StrokeThickness="0" Padding="10,8" StrokeShape="RoundRectangle 8" Margin="0,12,0,0">
+                                            <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                                                <Label Text="★" TextColor="#FFB300" FontSize="16" FontAttributes="Bold" VerticalOptions="Center"/>
+                                                <Label Text="{Binding MiCalificacion, StringFormat='El cliente valoró tu trabajo con {0} estrellas'}" TextColor="White" FontSize="12" FontAttributes="Bold" VerticalOptions="Center"/>
+                                            </HorizontalStackLayout>
+                                        </Border>
+
                                     </Grid>
                                 </Border>
                             </DataTemplate>

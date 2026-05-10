@@ -260,16 +260,27 @@ namespace AutoShift.Services
             catch { return false; }
         }
 
-        public async Task<bool> MarcarSolicitudComoCalificada(string clienteId, string solicitudId, int calificacion)
+        // Reemplaza el método actual por este:
+        public async Task<bool> MarcarSolicitudComoCalificada(string clienteId, string tallerId, string solicitudId, int calificacion)
         {
             try
             {
+                // 1. Guardar en el nodo del Cliente
                 await firebase.Child("Usuarios").Child(clienteId).Child("Solicitudes").Child(solicitudId)
                     .PatchAsync(new
                     {
                         TallerCalificado = true,
                         MiCalificacion = calificacion
                     });
+
+                // 2. Guardar en el nodo del Taller (¡Esto es lo que faltaba!)
+                await firebase.Child("Talleres").Child(tallerId).Child("Solicitudes").Child(solicitudId)
+                    .PatchAsync(new
+                    {
+                        TallerCalificado = true,
+                        MiCalificacion = calificacion
+                    });
+
                 return true;
             }
             catch { return false; }
