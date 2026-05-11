@@ -22,6 +22,10 @@ namespace AutoShift.ViewModels
         [ObservableProperty] private bool isBusy;
         [ObservableProperty] private DateTime fechaCitaSeleccionada = DateTime.Today.AddDays(1);
         [ObservableProperty] private TimeSpan horaCitaSeleccionada = TimeSpan.FromHours(9);
+        public ObservableCollection<Servicio> ServiciosDelTaller { get; } = new();
+
+        [ObservableProperty]
+        private Servicio? servicioSeleccionado;
 
         public ObservableCollection<DetalleServicio> Detalles { get; } = new();
 
@@ -58,6 +62,33 @@ namespace AutoShift.ViewModels
 
             OnPropertyChanged(nameof(TotalCotizacion));
             OnPropertyChanged(nameof(PuedeCotizar));
+
+            // AGREGAR ESTO AL FINAL:
+            if (value != null && !string.IsNullOrEmpty(value.TallerId))
+            {
+                _ = CargarCatalogoTaller(value.TallerId);
+            }
+        }
+
+        // NUEVO MÉTODO: Descarga los servicios de Firebase
+        private async Task CargarCatalogoTaller(string tallerId)
+        {
+            var servicios = await _firebaseService.GetServiciosAsync(tallerId);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                ServiciosDelTaller.Clear();
+                foreach (var s in servicios) ServiciosDelTaller.Add(s);
+            });
+        }
+
+        // MAGIA MVVM: Cuando elige un servicio del Picker, autollenamos el precio
+        partial void OnServicioSeleccionadoChanged(Servicio? value)
+        {
+            if (value != null)
+            {
+                NuevoDetalleNombre = value.Nombre;
+                NuevoDetallePrecio = value.PrecioBase.ToString();
+            }
         }
 
         [RelayCommand]

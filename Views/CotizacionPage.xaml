@@ -33,7 +33,20 @@
 
                     <StackLayout IsVisible="{Binding PuedeCotizar}">
                         <Label Text="Agregar servicios a la cotización" TextColor="{StaticResource AccentBlue}" FontAttributes="Bold" />
-                        <Entry Placeholder="Servicio" Text="{Binding NuevoDetalleNombre}" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
+                        <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="10,0" Margin="0,0,0,10" HasShadow="False">
+                            <Picker Title="Selecciona un servicio de tu catálogo..."
+                                ItemsSource="{Binding ServiciosDelTaller}"
+                                ItemDisplayBinding="{Binding Nombre}"
+                                SelectedItem="{Binding ServicioSeleccionado}"
+                                TextColor="White"
+                                TitleColor="#6C7281"/>
+                                            </Frame>
+
+                        <Entry Placeholder="O escribe un servicio personalizado..." 
+                           Text="{Binding NuevoDetalleNombre}" 
+                           PlaceholderColor="#4F5664" 
+                           TextColor="{StaticResource SurfaceText}" 
+                           FontSize="12"/>      
                         <Grid ColumnDefinitions="2*, *" ColumnSpacing="10">
                             <Entry Grid.Column="0" Placeholder="Precio" Text="{Binding NuevoDetallePrecio}" Keyboard="Numeric" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
                             <Entry Grid.Column="1" Placeholder="Cantidad" Text="{Binding NuevoDetalleCantidad}" Keyboard="Numeric" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
