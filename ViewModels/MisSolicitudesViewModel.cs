@@ -5,8 +5,6 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using CommunityToolkit.Maui.Views;
-using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {
@@ -16,11 +14,8 @@ namespace AutoShift.ViewModels
 
         [ObservableProperty] private bool isBusy;
 
-        public ObservableCollection<SolicitudServicio> Solicitudes { get; } = new();
-        public ObservableCollection<SolicitudServicio> SolicitudesEnviadas { get; } = new();
-        public ObservableCollection<SolicitudServicio> SolicitudesInspecciones { get; } = new();
-        public ObservableCollection<SolicitudServicio> SolicitudesAceptadas { get; } = new();
-        public ObservableCollection<SolicitudServicio> SolicitudesEnProceso { get; } = new();
+        // SE REDUJERON LAS LISTAS A SOLO 2 (EN CURSO Y FINALIZADAS)
+        public ObservableCollection<SolicitudServicio> SolicitudesActivas { get; } = new();
         public ObservableCollection<SolicitudServicio> SolicitudesFinalizadas { get; } = new();
 
         public MisSolicitudesViewModel()
@@ -38,32 +33,23 @@ namespace AutoShift.ViewModels
                 var lista = await _firebaseService.GetSolicitudesClienteAsync(clienteId);
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    Solicitudes.Clear();
-                    SolicitudesEnviadas.Clear();
-                    SolicitudesInspecciones.Clear();
-                    SolicitudesAceptadas.Clear();
-                    SolicitudesEnProceso.Clear();
+                    SolicitudesActivas.Clear();
                     SolicitudesFinalizadas.Clear();
+
                     foreach (var s in lista.OrderByDescending(s => s.Fecha))
                     {
                         s.IsExpanded = false;
-                        Solicitudes.Add(s);
-                        if (s.Estado?.Equals("PENDIENTE", StringComparison.OrdinalIgnoreCase) == true)
-                            SolicitudesEnviadas.Add(s);
-                        else if (s.Estado?.Equals("INSPECCION_SOLICITADA", StringComparison.OrdinalIgnoreCase) == true ||
-                                 s.Estado?.Equals("INSPECCION_ACEPTADA", StringComparison.OrdinalIgnoreCase) == true ||
-                                 s.Estado?.Equals("FECHA_PROPUESTA", StringComparison.OrdinalIgnoreCase) == true ||
-                                 s.Estado?.Equals("FECHA_RECHAZADA", StringComparison.OrdinalIgnoreCase) == true ||
-                                 s.Estado?.Equals("FECHAS_PROPUESTAS", StringComparison.OrdinalIgnoreCase) == true ||
-                                 s.Estado?.Equals("FECHA_VALIDADA", StringComparison.OrdinalIgnoreCase) == true ||
-                                 s.Estado?.Equals("INSPECCION_REALIZADA", StringComparison.OrdinalIgnoreCase) == true)
-                            SolicitudesInspecciones.Add(s);
-                        else if (s.Estado?.Equals("ACEPTADO", StringComparison.OrdinalIgnoreCase) == true)
-                            SolicitudesAceptadas.Add(s);
-                        else if (s.Estado?.Equals("EN PROCESO", StringComparison.OrdinalIgnoreCase) == true)
-                            SolicitudesEnProceso.Add(s);
-                        else if (s.Estado?.Equals("FINALIZADO", StringComparison.OrdinalIgnoreCase) == true)
+
+                        // Separar finalizadas y rechazadas del resto "En Curso"
+                        if (s.Estado?.Equals("FINALIZADO", StringComparison.OrdinalIgnoreCase) == true ||
+                            s.Estado?.Equals("RECHAZADO", StringComparison.OrdinalIgnoreCase) == true)
+                        {
                             SolicitudesFinalizadas.Add(s);
+                        }
+                        else
+                        {
+                            SolicitudesActivas.Add(s); // PENDIENTE, COTIZADO, EN PROCESO, etc...
+                        }
                     }
                 });
             }
@@ -262,5 +248,4 @@ namespace AutoShift.ViewModels
             await Shell.Current.GoToAsync("DejarResenaPage", parameters);
         }
     }
-
 }

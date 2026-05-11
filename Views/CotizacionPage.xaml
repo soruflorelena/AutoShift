@@ -19,17 +19,19 @@
                     <Label Text="Solicitud" TextColor="{StaticResource MutedText}" FontSize="12" />
                     <Label Text="{Binding SolicitudSeleccionada.TallerNombre}" TextColor="White" FontAttributes="Bold" FontSize="16" />
                     <Label Text="{Binding SolicitudSeleccionada.VehiculoInfo}" TextColor="{StaticResource AccentBlue}" FontSize="12" />
+
                     <Label Text="Servicios solicitados:" TextColor="{StaticResource MutedText}" FontSize="12" />
                     <Label Text="{Binding SolicitudSeleccionada.ServiciosSolicitadosTexto}" TextColor="{StaticResource MutedText}" FontSize="14" />
+
                     <Label Text="Diagnóstico previo:" TextColor="{StaticResource MutedText}" FontSize="12" />
-                    <Label Text="{Binding SolicitudSeleccionada.DiagnosticoCliente}" TextColor="{StaticResource MutedText}" FontSize="14" />
                     <Label Text="{Binding SolicitudSeleccionada.DescripcionProblema}" TextColor="{StaticResource MutedText}" FontSize="14" />
                 </VerticalStackLayout>
             </Border>
 
             <Border BackgroundColor="{StaticResource CardBackground}" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 20" Padding="20">
                 <VerticalStackLayout Spacing="15">
-                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsPendiente}">
+
+                    <StackLayout IsVisible="{Binding PuedeCotizar}">
                         <Label Text="Agregar servicios a la cotización" TextColor="{StaticResource AccentBlue}" FontAttributes="Bold" />
                         <Entry Placeholder="Servicio" Text="{Binding NuevoDetalleNombre}" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
                         <Grid ColumnDefinitions="2*, *" ColumnSpacing="10">
@@ -129,13 +131,13 @@
                                 <Label Grid.Column="1" Text="{Binding Precio, StringFormat='${0:F2}'}" TextColor="{StaticResource Accent}" />
                                 <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Cantidad, StringFormat='Cantidad: {0}'}" TextColor="{StaticResource MutedText}" FontSize="12" />
                                 <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
-        Text="Eliminar"
-        Command="{Binding Path=BindingContext.EliminarDetalleCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-        CommandParameter="{Binding .}"
-        FontSize="10"
-        BackgroundColor="#EF4444"
-        TextColor="White"
-        CornerRadius="15" />
+                                        Text="Eliminar"
+                                        Command="{Binding Path=BindingContext.EliminarDetalleCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                        CommandParameter="{Binding .}"
+                                        FontSize="10"
+                                        BackgroundColor="#EF4444"
+                                        TextColor="White"
+                                        CornerRadius="15" />
                             </Grid>
                         </Border>
                     </DataTemplate>

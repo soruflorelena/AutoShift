@@ -6,8 +6,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using CommunityToolkit.Maui.Views;
-using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {
@@ -32,6 +30,12 @@ namespace AutoShift.ViewModels
             _firebaseService = new FirebaseService();
         }
 
+        public decimal TotalCotizacion => Detalles.Sum(d => d.Precio * d.Cantidad);
+
+        // NUEVA PROPIEDAD: Permite agregar servicios tanto en estado inicial como después de inspeccionar
+        public bool PuedeCotizar => SolicitudSeleccionada?.EsPendiente == true || SolicitudSeleccionada?.EsInspeccionRealizada == true;
+
+        // ESTE MÉTODO AHORA ES ÚNICO Y ACTUALIZA AMBAS PROPIEDADES (Total y PuedeCotizar)
         partial void OnSolicitudSeleccionadaChanged(SolicitudServicio? value)
         {
             Detalles.Clear();
@@ -53,9 +57,8 @@ namespace AutoShift.ViewModels
             }
 
             OnPropertyChanged(nameof(TotalCotizacion));
+            OnPropertyChanged(nameof(PuedeCotizar));
         }
-
-        public decimal TotalCotizacion => Detalles.Sum(d => d.Precio * d.Cantidad);
 
         [RelayCommand]
         private async Task AgregarDetalle()
@@ -270,7 +273,6 @@ namespace AutoShift.ViewModels
             if (guardadoTaller && guardadoCliente)
             {
                 await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Fecha validada."));
-                // Recargar o notificar
             }
             else
             {

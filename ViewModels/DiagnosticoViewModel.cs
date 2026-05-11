@@ -160,6 +160,11 @@ namespace AutoShift.ViewModels
                 { "DescripcionCliente", Sintomas }
             };
             await Shell.Current.GoToAsync("DetalleTallerPage", parameters);
+
+            // 1. LIMPIAR EL FORMULARIO DESPUÉS DE ENVIAR
+            Sintomas = string.Empty;
+            ResultadosMultiples.Clear();
+            MostrarResultados = false;
         }
     }
 
