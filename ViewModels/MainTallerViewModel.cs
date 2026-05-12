@@ -33,19 +33,18 @@ namespace AutoShift.ViewModels
         [ObservableProperty] private Color tabSolicitudesColor = Color.FromArgb("#FFC107");
         [ObservableProperty] private Color tabServiciosColor = Color.FromArgb("#1A1A1D");
 
+        // FILOSOFÍA PREMIUM: Simplificación de listas
         public ObservableCollection<SolicitudServicio> SolicitudesActivas { get; } = new();
-        public ObservableCollection<SolicitudServicio> SolicitudesEnviadas { get; } = new();
-        public ObservableCollection<SolicitudServicio> SolicitudesInspecciones { get; } = new();
-        public ObservableCollection<SolicitudServicio> SolicitudesAceptadas { get; } = new();
-        public ObservableCollection<SolicitudServicio> SolicitudesEnProceso { get; } = new();
-        public ObservableCollection<SolicitudServicio> SolicitudesFinalizadas { get; } = new();
+        public ObservableCollection<SolicitudServicio> SolicitudesNuevas { get; } = new();     // PENDIENTE
+        public ObservableCollection<SolicitudServicio> SolicitudesEnGestion { get; } = new();  // COTIZADO, ACEPTADO, EN_PROCESO, INSPECCIONES...
+        public ObservableCollection<SolicitudServicio> SolicitudesFinalizadas { get; } = new(); // FINALIZADO, RECHAZADO
+
         public ObservableCollection<Servicio> MisServicios { get; } = new();
 
         public MainTallerViewModel()
         {
             _firebaseService = new FirebaseService();
             _tallerId = Preferences.Get("UsuarioId", "Anonimo");
-            // Constructor vacío de procesos de red para evitar congelamientos en el inicio
         }
 
         public async Task InicializarDatosAsync()
@@ -55,7 +54,6 @@ namespace AutoShift.ViewModels
                 string nombreTaller = Preferences.Get("UsuarioNombre", "Taller Central");
                 string ciudadTaller = Preferences.Get("UsuarioCiudad", "Sin Ubicación");
 
-                // Carga en segundo plano de manera segura
                 await CargarServiciosDesdeFirebase();
                 await CargarSolicitudesDesdeFirebase();
 
@@ -86,31 +84,29 @@ namespace AutoShift.ViewModels
             var lista = await _firebaseService.GetSolicitudesTallerAsync(_tallerId);
             MainThread.BeginInvokeOnMainThread(() => {
                 SolicitudesActivas.Clear();
-                SolicitudesEnviadas.Clear();
-                SolicitudesInspecciones.Clear();
-                SolicitudesAceptadas.Clear();
-                SolicitudesEnProceso.Clear();
+                SolicitudesNuevas.Clear();
+                SolicitudesEnGestion.Clear();
                 SolicitudesFinalizadas.Clear();
+
                 foreach (var s in lista.OrderByDescending(s => s.Fecha))
                 {
                     s.IsExpanded = false;
                     SolicitudesActivas.Add(s);
+
                     if (s.Estado?.Equals("PENDIENTE", StringComparison.OrdinalIgnoreCase) == true)
-                        SolicitudesEnviadas.Add(s);
-                    else if (s.Estado?.Equals("INSPECCION_SOLICITADA", StringComparison.OrdinalIgnoreCase) == true ||
-                             s.Estado?.Equals("INSPECCION_ACEPTADA", StringComparison.OrdinalIgnoreCase) == true ||
-                             s.Estado?.Equals("FECHA_PROPUESTA", StringComparison.OrdinalIgnoreCase) == true ||
-                             s.Estado?.Equals("FECHA_RECHAZADA", StringComparison.OrdinalIgnoreCase) == true ||
-                             s.Estado?.Equals("FECHAS_PROPUESTAS", StringComparison.OrdinalIgnoreCase) == true ||
-                             s.Estado?.Equals("FECHA_VALIDADA", StringComparison.OrdinalIgnoreCase) == true ||
-                             s.Estado?.Equals("INSPECCION_REALIZADA", StringComparison.OrdinalIgnoreCase) == true)
-                        SolicitudesInspecciones.Add(s);
-                    else if (s.Estado?.Equals("ACEPTADO", StringComparison.OrdinalIgnoreCase) == true)
-                        SolicitudesAceptadas.Add(s);
-                    else if (s.Estado?.Equals("EN PROCESO", StringComparison.OrdinalIgnoreCase) == true)
-                        SolicitudesEnProceso.Add(s);
-                    else if (s.Estado?.Equals("FINALIZADO", StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        SolicitudesNuevas.Add(s);
+                    }
+                    else if (s.Estado?.Equals("FINALIZADO", StringComparison.OrdinalIgnoreCase) == true ||
+                             s.Estado?.Equals("RECHAZADO", StringComparison.OrdinalIgnoreCase) == true)
+                    {
                         SolicitudesFinalizadas.Add(s);
+                    }
+                    else
+                    {
+                        // Cualquier otra cosa está en gestión
+                        SolicitudesEnGestion.Add(s);
+                    }
                 }
                 ActualizarMetricas();
             });
@@ -118,14 +114,9 @@ namespace AutoShift.ViewModels
 
         private void ActualizarMetricas()
         {
-            // Ahora "Nuevas" incluye las pendientes y "En Curso" toma en cuenta las ya cotizadas y en proceso
-            NuevasCount = SolicitudesActivas.Count(s => s.Estado?.Equals("PENDIENTE", StringComparison.OrdinalIgnoreCase) == true);
-            EnCursoCount = SolicitudesActivas.Count(s =>
-                s.Estado?.Equals("ACEPTADO", StringComparison.OrdinalIgnoreCase) == true ||
-                s.Estado?.Equals("EN PROCESO", StringComparison.OrdinalIgnoreCase) == true ||
-                s.Estado?.Equals("COTIZADO", StringComparison.OrdinalIgnoreCase) == true);
+            NuevasCount = SolicitudesNuevas.Count;
+            EnCursoCount = SolicitudesEnGestion.Count;
 
-            // Ganancias solo de servicios finalizados
             GananciasMes = SolicitudesActivas
                 .Where(s => s.Estado?.Equals("FINALIZADO", StringComparison.OrdinalIgnoreCase) == true && s.Cotizacion != null)
                 .Sum(s => s.Cotizacion.CostoTotal);
@@ -152,8 +143,24 @@ namespace AutoShift.ViewModels
         {
             if (solicitud == null) return;
             var parameters = new Dictionary<string, object> { { "Solicitud", solicitud } };
+            await Shell.Current.GoToAsync("CotizacionPage", parameters);
+        }
 
-            // Navegamos de forma limpia
+        // --- NUEVOS COMANDOS DE ACCIÓN DIRECTA ---
+
+        [RelayCommand]
+        private async Task IrACotizar(SolicitudServicio solicitud)
+        {
+            if (solicitud == null) return;
+            var parameters = new Dictionary<string, object> { { "Solicitud", solicitud }, { "AccionDirecta", "Cotizar" } };
+            await Shell.Current.GoToAsync("CotizacionPage", parameters);
+        }
+
+        [RelayCommand]
+        private async Task IrAProgramarCita(SolicitudServicio solicitud)
+        {
+            if (solicitud == null) return;
+            var parameters = new Dictionary<string, object> { { "Solicitud", solicitud }, { "AccionDirecta", "Agendar" } };
             await Shell.Current.GoToAsync("CotizacionPage", parameters);
         }
 

@@ -10,6 +10,7 @@ using System.Globalization;
 namespace AutoShift.ViewModels
 {
     [QueryProperty(nameof(SolicitudSeleccionada), "Solicitud")]
+    [QueryProperty(nameof(AccionDirecta), "AccionDirecta")]
     public partial class CotizacionViewModel : ObservableObject
     {
         private readonly FirebaseService _firebaseService;
@@ -29,6 +30,9 @@ namespace AutoShift.ViewModels
 
         public ObservableCollection<DetalleServicio> Detalles { get; } = new();
 
+        [ObservableProperty]
+        private string accionDirecta = string.Empty;
+
         public CotizacionViewModel()
         {
             _firebaseService = new FirebaseService();
@@ -36,8 +40,11 @@ namespace AutoShift.ViewModels
 
         public decimal TotalCotizacion => Detalles.Sum(d => d.Precio * d.Cantidad);
 
-        // NUEVA PROPIEDAD: Permite agregar servicios tanto en estado inicial como después de inspeccionar
-        public bool PuedeCotizar => SolicitudSeleccionada?.EsPendiente == true || SolicitudSeleccionada?.EsInspeccionRealizada == true;
+        // Modificamos esta propiedad para que sea inteligente:
+        public bool PuedeCotizar => AccionDirecta == "Cotizar" || SolicitudSeleccionada?.EsPendiente == true || SolicitudSeleccionada?.EsInspeccionRealizada == true;
+
+        // Propiedad nueva para saber si solo quiere agendar:
+        public bool QuiereAgendar => AccionDirecta == "Agendar";
 
         // ESTE MÉTODO AHORA ES ÚNICO Y ACTUALIZA AMBAS PROPIEDADES (Total y PuedeCotizar)
         partial void OnSolicitudSeleccionadaChanged(SolicitudServicio? value)

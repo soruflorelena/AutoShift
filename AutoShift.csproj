@@ -124,4 +124,8 @@
 	  </None>
 	</ItemGroup>
 
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+		<EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+	</PropertyGroup>
+
 </Project>

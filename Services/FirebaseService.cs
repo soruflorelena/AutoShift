@@ -1,10 +1,11 @@
-﻿using System;
+﻿using AutoShift.Models;
+using Firebase.Database;
+using Firebase.Database.Query;
+using Firebase.Database.Streaming;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Firebase.Database;
-using Firebase.Database.Query;
-using AutoShift.Models;
 
 namespace AutoShift.Services
 {
@@ -284,6 +285,16 @@ namespace AutoShift.Services
                 return true;
             }
             catch { return false; }
+        }
+
+        public IObservable<FirebaseEvent<SolicitudServicio>> EscucharSolicitudesTaller(string tallerId)
+        {
+            return firebase.Child("Talleres").Child(tallerId).Child("Solicitudes").AsObservable<SolicitudServicio>();
+        }
+
+        public IObservable<FirebaseEvent<SolicitudServicio>> EscucharSolicitudesCliente(string clienteId)
+        {
+            return firebase.Child("Usuarios").Child(clienteId).Child("Solicitudes").AsObservable<SolicitudServicio>();
         }
     }
 }

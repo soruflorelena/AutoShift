@@ -7,12 +7,12 @@
              x:Class="AutoShift.Views.CotizacionPage"
              x:Name="Root"
              x:DataType="viewmodels:CotizacionViewModel"
-             Title="Cotización"
+             Title="Detalle y Respuesta"
              BackgroundColor="{StaticResource AppBackground}">
 
     <ScrollView>
         <VerticalStackLayout Padding="25" Spacing="20">
-            <Label Text="Generar cotización" FontSize="24" FontAttributes="Bold" TextColor="White" />
+            <Label Text="Responder Solicitud" FontSize="24" FontAttributes="Bold" TextColor="White" />
 
             <Border BackgroundColor="{StaticResource CardBackground}" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 20" Padding="20">
                 <VerticalStackLayout Spacing="12">
@@ -32,31 +32,29 @@
                 <VerticalStackLayout Spacing="15">
 
                     <StackLayout IsVisible="{Binding PuedeCotizar}">
-                        <Label Text="Agregar servicios a la cotización" TextColor="{StaticResource AccentBlue}" FontAttributes="Bold" />
+                        <Label Text="Agregar servicios a la cotización" TextColor="{StaticResource AccentBlue}" FontAttributes="Bold" Margin="0,0,0,10"/>
+
                         <Frame BackgroundColor="#0F111A" BorderColor="#1E2235" CornerRadius="8" Padding="10,0" Margin="0,0,0,10" HasShadow="False">
                             <Picker Title="Selecciona un servicio de tu catálogo..."
-                                ItemsSource="{Binding ServiciosDelTaller}"
-                                ItemDisplayBinding="{Binding Nombre}"
-                                SelectedItem="{Binding ServicioSeleccionado}"
-                                TextColor="White"
-                                TitleColor="#6C7281"/>
-                                            </Frame>
+                                    ItemsSource="{Binding ServiciosDelTaller}"
+                                    ItemDisplayBinding="{Binding Nombre}"
+                                    SelectedItem="{Binding ServicioSeleccionado}"
+                                    TextColor="White"
+                                    TitleColor="#6C7281"/>
+                        </Frame>
 
-                        <Entry Placeholder="O escribe un servicio personalizado..." 
-                           Text="{Binding NuevoDetalleNombre}" 
-                           PlaceholderColor="#4F5664" 
-                           TextColor="{StaticResource SurfaceText}" 
-                           FontSize="12"/>      
-                        <Grid ColumnDefinitions="2*, *" ColumnSpacing="10">
+                        <Entry Placeholder="O escribe un servicio personalizado..." Text="{Binding NuevoDetalleNombre}" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
+
+                        <Grid ColumnDefinitions="2*, *" ColumnSpacing="10" Margin="0,10,0,0">
                             <Entry Grid.Column="0" Placeholder="Precio" Text="{Binding NuevoDetallePrecio}" Keyboard="Numeric" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
                             <Entry Grid.Column="1" Placeholder="Cantidad" Text="{Binding NuevoDetalleCantidad}" Keyboard="Numeric" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
                         </Grid>
-                        <Button Text="AGREGAR LÍNEA" Command="{Binding AgregarDetalleCommand}" BackgroundColor="{StaticResource AccentBlue}" TextColor="White" CornerRadius="25"/>
+                        <Button Text="AGREGAR LÍNEA" Command="{Binding AgregarDetalleCommand}" BackgroundColor="{StaticResource AccentBlue}" TextColor="White" CornerRadius="25" Margin="0,10,0,0"/>
                     </StackLayout>
 
                     <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsPendiente}" Spacing="10">
-                        <Button Text="ENVIAR COTIZACIÓN" Command="{Binding EnviarCotizacionCommand}" BackgroundColor="{StaticResource Accent}" TextColor="White" CornerRadius="25" HeightRequest="55" />
-                        <Button Text="SOLICITAR INSPECCIÓN FÍSICA" Command="{Binding SolicitarInspeccionCommand}" BackgroundColor="#8B5CF6" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                        <Label Text="*Si agregas precios, se enviará como Cotización. Si dejas en blanco, se solicitará Revisión Física." TextColor="#6C7281" FontSize="11" FontAttributes="Italic"/>
+                        <Button Text="ENVIAR RESPUESTA" Command="{Binding EnviarCotizacionCommand}" BackgroundColor="{StaticResource Accent}" TextColor="White" CornerRadius="25" HeightRequest="55" FontAttributes="Bold"/>
                     </StackLayout>
 
                     <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsCotizado}" Spacing="12">
@@ -71,23 +69,34 @@
                             <TimePicker Grid.Column="1" Time="{Binding HoraCitaSeleccionada}" />
                         </Grid>
                         <Entry Placeholder="Comentarios para el cliente" Text="{Binding Comentario}" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
-                        <Button Text="AGENDAR CITA" Command="{Binding AsignarCitaCommand}" BackgroundColor="#10B981" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                        <Button Text="AGENDAR CITA" Command="{Binding AsignarCitaCommand}" BackgroundColor="#10B981" TextColor="White" CornerRadius="25" HeightRequest="55" FontAttributes="Bold"/>
                     </StackLayout>
 
                     <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsCitaAsignada}" Spacing="12">
                         <Label Text="Cita agendada" TextColor="White" FontAttributes="Bold" />
                         <Label Text="{Binding SolicitudSeleccionada.FechaCitaTexto}" TextColor="{StaticResource MutedText}" FontSize="14" />
-                        <Button Text="INICIAR REPARACIÓN" Command="{Binding MarcarEnProcesoCommand}" BackgroundColor="#F59E0B" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                        <Button Text="RECIBIR VEHÍCULO E INICIAR" Command="{Binding MarcarEnProcesoCommand}" BackgroundColor="#F59E0B" TextColor="White" CornerRadius="25" HeightRequest="55" FontAttributes="Bold"/>
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsFechaValidada}" Spacing="12">
+                        <Label Text="El cliente tiene cita hoy." TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                        <Label Text="{Binding SolicitudSeleccionada.FechaValidadaTexto}" TextColor="{StaticResource MutedText}" FontSize="14" HorizontalTextAlignment="Center"/>
+                        <Button Text="RECIBIR VEHÍCULO" Command="{Binding MarcarInspeccionRealizadaCommand}" BackgroundColor="#FFB300" TextColor="#090A0F" HeightRequest="55" CornerRadius="25" FontAttributes="Bold"/>
+                    </StackLayout>
+
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsInspeccionRealizada}" Spacing="12">
+                        <Label Text="Inspección realizada. Ahora puedes enviar la cotización con los precios exactos." TextColor="White" FontAttributes="Bold" />
+                        <Button Text="ENVIAR COTIZACIÓN" Command="{Binding EnviarCotizacionCommand}" BackgroundColor="{StaticResource Accent}" TextColor="White" CornerRadius="25" HeightRequest="55" FontAttributes="Bold"/>
                     </StackLayout>
 
                     <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsEnProceso}" Spacing="12">
                         <Label Text="La reparación está en proceso." TextColor="White" FontAttributes="Bold" />
-                        <Button Text="MARCAR FINALIZADO" Command="{Binding MarcarFinalizadoCommand}" BackgroundColor="#22C55E" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                        <Button Text="MARCAR FINALIZADO" Command="{Binding MarcarFinalizadoCommand}" BackgroundColor="#22C55E" TextColor="White" CornerRadius="25" HeightRequest="55" FontAttributes="Bold"/>
                     </StackLayout>
 
                     <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsCompletado}" Spacing="12">
                         <Label Text="El cliente indicó que la reparación está completa." TextColor="White" FontAttributes="Bold" />
-                        <Button Text="FINALIZAR TRABAJO" Command="{Binding MarcarFinalizadoCommand}" BackgroundColor="#22C55E" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                        <Button Text="FINALIZAR TRABAJO" Command="{Binding MarcarFinalizadoCommand}" BackgroundColor="#22C55E" TextColor="White" CornerRadius="25" HeightRequest="55" FontAttributes="Bold"/>
                     </StackLayout>
 
                     <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsFinalizado}" Spacing="12">
@@ -95,12 +104,11 @@
                     </StackLayout>
 
                     <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsRechazado}" Spacing="12">
-                        <Label Text="El cliente rechazó la cotización. La solicitud se cierra." TextColor="White" FontAttributes="Bold" />
+                        <Label Text="El cliente rechazó la cotización o la fecha. La solicitud se cierra." TextColor="White" FontAttributes="Bold" />
                     </StackLayout>
 
-                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsNecesitaInspeccion}" Spacing="12">
-                        <Label Text="El taller solicita inspección física para completar el diagnóstico." TextColor="White" FontAttributes="Bold" />
-                        <Label Text="Coordina con el cliente una visita al taller para revisión." TextColor="{StaticResource MutedText}" FontSize="14" />
+                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsInspeccionSolicitada}" Spacing="12">
+                        <Label Text="Solicitaste inspección física. Esperando confirmación del cliente." TextColor="White" FontAttributes="Bold" />
                     </StackLayout>
 
                     <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsInspeccionAceptada}" Spacing="12">
@@ -110,25 +118,15 @@
                             <TimePicker Grid.Column="1" Time="{Binding HoraCitaSeleccionada}" />
                         </Grid>
                         <Entry Placeholder="Comentarios para el cliente" Text="{Binding Comentario}" PlaceholderColor="{StaticResource MutedText}" TextColor="{StaticResource SurfaceText}" />
-                        <Button Text="PROPONER FECHA" Command="{Binding ProponerFechaCommand}" BackgroundColor="#10B981" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                        <Button Text="PROPONER FECHA" Command="{Binding ProponerFechaCommand}" BackgroundColor="#10B981" TextColor="White" CornerRadius="25" HeightRequest="55" FontAttributes="Bold"/>
                     </StackLayout>
 
                     <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsFechasPropuestas}" Spacing="12">
                         <Label Text="El cliente propuso fechas alternativas. Selecciona una para validar." TextColor="White" FontAttributes="Bold" />
                         <Label Text="{Binding SolicitudSeleccionada.FechasAlternativasTexto}" TextColor="{StaticResource MutedText}" FontSize="14" />
-                        <Button Text="VALIDAR FECHA" Command="{Binding ValidarFechaCommand}" CommandParameter="{Binding SolicitudSeleccionada}" BackgroundColor="#3B82F6" TextColor="White" CornerRadius="25" HeightRequest="55" />
+                        <Button Text="VALIDAR FECHA" Command="{Binding ValidarFechaCommand}" CommandParameter="{Binding SolicitudSeleccionada}" BackgroundColor="#3B82F6" TextColor="White" CornerRadius="25" HeightRequest="55" FontAttributes="Bold"/>
                     </StackLayout>
 
-                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsFechaValidada}" Spacing="12">
-                        <Label Text="Fecha validada. Marca cuando se realice la inspección." TextColor="White" FontAttributes="Bold" />
-                        <Label Text="{Binding SolicitudSeleccionada.FechaValidadaTexto}" TextColor="{StaticResource MutedText}" FontSize="14" />
-                        <Button Text="MARCAR INSPECCIÓN REALIZADA" Command="{Binding MarcarInspeccionRealizadaCommand}" BackgroundColor="#F59E0B" TextColor="White" CornerRadius="25" HeightRequest="55" />
-                    </StackLayout>
-
-                    <StackLayout IsVisible="{Binding SolicitudSeleccionada.EsInspeccionRealizada}" Spacing="12">
-                        <Label Text="Inspección realizada. Ahora puedes enviar la cotización." TextColor="White" FontAttributes="Bold" />
-                        <Button Text="ENVIAR COTIZACIÓN" Command="{Binding EnviarCotizacionCommand}" BackgroundColor="{StaticResource Accent}" TextColor="White" CornerRadius="25" HeightRequest="55" />
-                    </StackLayout>
                 </VerticalStackLayout>
             </Border>
 
