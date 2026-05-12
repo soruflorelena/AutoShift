@@ -77,20 +77,11 @@
                                                 <Label Text="{Binding EstadoTexto}" TextColor="#FFB01F" FontSize="10" FontAttributes="Bold"/>
                                             </Border>
                                         </Grid>
-
                                         <Label Grid.Row="1" Text="{Binding DescripcionProblema}" TextColor="#CBD5E1" Margin="0,12" FontSize="14" LineHeight="1.2"/>
-
-                                        <Grid Grid.Row="2" ColumnDefinitions="*, *" ColumnSpacing="10" Margin="0,12,0,0">
-                                            <Button Text="COTIZAR AHORA" 
-                                                    Command="{Binding Path=BindingContext.IrACotizarCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                                    CommandParameter="{Binding .}"
-                                                    BackgroundColor="#FFB300" TextColor="#090A0F" FontAttributes="Bold" CornerRadius="8" HeightRequest="42" FontSize="11"/>
-
-                                            <Button Grid.Column="1" Text="PROGRAMAR REVISIÓN" 
-                                                    Command="{Binding Path=BindingContext.IrAProgramarCitaCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                                    CommandParameter="{Binding .}"
-                                                    BackgroundColor="Transparent" BorderColor="#3B82F6" BorderWidth="1.5" TextColor="#3B82F6" CornerRadius="8" HeightRequest="42" FontSize="11" FontAttributes="Bold"/>
-                                        </Grid>
+                                        <Button Grid.Row="2" Text="GESTIONAR SOLICITUD" 
+                                                Command="{Binding Path=BindingContext.ResponderSolicitudCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#FFB300" TextColor="#090A0F" FontSize="12" FontAttributes="Bold" CornerRadius="10" HeightRequest="42"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -119,7 +110,7 @@
                                         <Button Grid.Row="2" Text="GESTIONAR SOLICITUD" 
                                                 Command="{Binding Path=BindingContext.ResponderSolicitudCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                                                 CommandParameter="{Binding .}"
-                                                BackgroundColor="#1F2937" TextColor="White" FontSize="13" FontAttributes="Bold" CornerRadius="10" HeightRequest="42"/>
+                                                BackgroundColor="#1F2937" TextColor="White" FontSize="12" FontAttributes="Bold" CornerRadius="10" HeightRequest="42"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>

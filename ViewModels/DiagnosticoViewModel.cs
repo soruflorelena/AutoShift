@@ -36,7 +36,6 @@ namespace AutoShift.ViewModels
             MostrarResultados = false;
             ResultadosMultiples.Clear();
 
-            // EJECUCIÓN DEL MOTOR DE INFERENCIA MULTI-FALLA PROFESIONAL
             var fallasDetectadas = MotorInferenciaProfesional(Sintomas.ToLower());
 
             try
@@ -55,7 +54,6 @@ namespace AutoShift.ViewModels
                     {
                         var servicios = await _firebaseService.GetServiciosAsync(taller.Id);
 
-                        // Búsqueda semántica cruzada entre etiquetas de la IA y el catálogo del taller
                         bool cubreFalla = servicios.Any(s =>
                             falla.Tags.Any(tag => s.Nombre.ToLower().Contains(tag) || s.Descripcion.ToLower().Contains(tag)));
 

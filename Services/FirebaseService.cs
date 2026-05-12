@@ -13,6 +13,16 @@ namespace AutoShift.Services
     {
         private readonly FirebaseClient firebase = new("https://autoshift-7a011-default-rtdb.firebaseio.com/");
 
+        public IObservable<FirebaseEvent<SolicitudServicio>> EscucharSolicitudesTaller(string tallerId)
+        {
+            return firebase.Child("Talleres").Child(tallerId).Child("Solicitudes").AsObservable<SolicitudServicio>();
+        }
+
+        public IObservable<FirebaseEvent<SolicitudServicio>> EscucharSolicitudesCliente(string clienteId)
+        {
+            return firebase.Child("Usuarios").Child(clienteId).Child("Solicitudes").AsObservable<SolicitudServicio>();
+        }
+
         // --- USUARIOS ---
         public async Task<bool> RegistrarUsuario(Usuario usuario)
         {
@@ -51,7 +61,6 @@ namespace AutoShift.Services
         {
             try
             {
-                // Registra los datos del taller (nombre y ubicación) bajo su ID único
                 await firebase.Child("Talleres").Child(taller.Id).PatchAsync(new
                 {
                     Nombre = taller.Nombre,
@@ -207,13 +216,11 @@ namespace AutoShift.Services
         {
             try
             {
-                // Traemos el nodo completo de Talleres
                 var result = await firebase.Child("Talleres").OnceAsync<dynamic>();
                 var lista = new List<Taller>();
 
                 foreach (var item in result)
                 {
-                    // Firebase nos devuelve un objeto dinámico, extraemos los datos básicos
                     lista.Add(new Taller
                     {
                         Id = item.Key,
@@ -261,40 +268,19 @@ namespace AutoShift.Services
             catch { return false; }
         }
 
-        // Reemplaza el método actual por este:
         public async Task<bool> MarcarSolicitudComoCalificada(string clienteId, string tallerId, string solicitudId, int calificacion)
         {
             try
             {
-                // 1. Guardar en el nodo del Cliente
                 await firebase.Child("Usuarios").Child(clienteId).Child("Solicitudes").Child(solicitudId)
-                    .PatchAsync(new
-                    {
-                        TallerCalificado = true,
-                        MiCalificacion = calificacion
-                    });
+                    .PatchAsync(new { TallerCalificado = true, MiCalificacion = calificacion });
 
-                // 2. Guardar en el nodo del Taller (¡Esto es lo que faltaba!)
                 await firebase.Child("Talleres").Child(tallerId).Child("Solicitudes").Child(solicitudId)
-                    .PatchAsync(new
-                    {
-                        TallerCalificado = true,
-                        MiCalificacion = calificacion
-                    });
+                    .PatchAsync(new { TallerCalificado = true, MiCalificacion = calificacion });
 
                 return true;
             }
             catch { return false; }
-        }
-
-        public IObservable<FirebaseEvent<SolicitudServicio>> EscucharSolicitudesTaller(string tallerId)
-        {
-            return firebase.Child("Talleres").Child(tallerId).Child("Solicitudes").AsObservable<SolicitudServicio>();
-        }
-
-        public IObservable<FirebaseEvent<SolicitudServicio>> EscucharSolicitudesCliente(string clienteId)
-        {
-            return firebase.Child("Usuarios").Child(clienteId).Child("Solicitudes").AsObservable<SolicitudServicio>();
         }
     }
 }

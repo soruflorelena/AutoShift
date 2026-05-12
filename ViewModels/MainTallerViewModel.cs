@@ -5,6 +5,9 @@ using AutoShift.Models;
 using AutoShift.Services;
 using CommunityToolkit.Maui.Views;
 using AutoShift.Views;
+using System.Linq;
+using System.Threading.Tasks;
+using System;
 
 namespace AutoShift.ViewModels
 {
@@ -13,31 +16,28 @@ namespace AutoShift.ViewModels
         private readonly FirebaseService _firebaseService;
         private string _tallerId;
         private string? _idEnEdicion = null;
+        private IDisposable? _suscripcionFirebase;
 
-        // Propiedades de formulario
         [ObservableProperty] private string nuevoNombre = string.Empty;
         [ObservableProperty] private string nuevaDescripcion = string.Empty;
         [ObservableProperty] private decimal nuevoPrecio;
         [ObservableProperty] private string nuevasMarcas = string.Empty;
         [ObservableProperty] private string textoBotonGuardar = "GUARDAR EN CATÁLOGO";
 
-        // KPIs que se vinculan a la vista
         [ObservableProperty] private int nuevasCount;
         [ObservableProperty] private int enCursoCount;
         [ObservableProperty] private decimal gananciasMes;
 
-        // Tabs
         [ObservableProperty] private bool isSolicitudesVisible = true;
         [ObservableProperty] private bool isServiciosVisible = false;
 
         [ObservableProperty] private Color tabSolicitudesColor = Color.FromArgb("#FFC107");
         [ObservableProperty] private Color tabServiciosColor = Color.FromArgb("#1A1A1D");
 
-        // FILOSOFÍA PREMIUM: Simplificación de listas
         public ObservableCollection<SolicitudServicio> SolicitudesActivas { get; } = new();
-        public ObservableCollection<SolicitudServicio> SolicitudesNuevas { get; } = new();     // PENDIENTE
-        public ObservableCollection<SolicitudServicio> SolicitudesEnGestion { get; } = new();  // COTIZADO, ACEPTADO, EN_PROCESO, INSPECCIONES...
-        public ObservableCollection<SolicitudServicio> SolicitudesFinalizadas { get; } = new(); // FINALIZADO, RECHAZADO
+        public ObservableCollection<SolicitudServicio> SolicitudesNuevas { get; } = new();
+        public ObservableCollection<SolicitudServicio> SolicitudesEnGestion { get; } = new();
+        public ObservableCollection<SolicitudServicio> SolicitudesFinalizadas { get; } = new();
 
         public ObservableCollection<Servicio> MisServicios { get; } = new();
 
@@ -54,8 +54,12 @@ namespace AutoShift.ViewModels
                 string nombreTaller = Preferences.Get("UsuarioNombre", "Taller Central");
                 string ciudadTaller = Preferences.Get("UsuarioCiudad", "Sin Ubicación");
 
+                // CARGA RÁPIDA INICIAL
                 await CargarServiciosDesdeFirebase();
-                await CargarSolicitudesDesdeFirebase();
+                await CargarSolicitudesRapido();
+
+                // INICIAR TIEMPO REAL
+                IniciarEscuchaEnTiempoReal();
 
                 await _firebaseService.ActualizarDatosTaller(new Taller
                 {
@@ -70,45 +74,94 @@ namespace AutoShift.ViewModels
             }
         }
 
+        // CARGA RÁPIDA: Descarga todo de golpe
+        public async Task CargarSolicitudesRapido()
+        {
+            var lista = await _firebaseService.GetSolicitudesTallerAsync(_tallerId);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                SolicitudesActivas.Clear();
+                SolicitudesNuevas.Clear();
+                SolicitudesEnGestion.Clear();
+                SolicitudesFinalizadas.Clear();
+
+                foreach (var sol in lista.OrderByDescending(s => s.Fecha))
+                {
+                    sol.IsExpanded = false;
+                    SolicitudesActivas.Add(sol);
+
+                    if (sol.Estado?.Equals("PENDIENTE", StringComparison.OrdinalIgnoreCase) == true)
+                        SolicitudesNuevas.Add(sol);
+                    else if (sol.Estado?.Equals("FINALIZADO", StringComparison.OrdinalIgnoreCase) == true ||
+                             sol.Estado?.Equals("RECHAZADO", StringComparison.OrdinalIgnoreCase) == true)
+                        SolicitudesFinalizadas.Add(sol);
+                    else
+                        SolicitudesEnGestion.Add(sol);
+                }
+                ActualizarMetricas();
+            });
+        }
+
+        // TIEMPO REAL: Solo actualiza si hay cambios verdaderos
+        private void IniciarEscuchaEnTiempoReal()
+        {
+            _suscripcionFirebase?.Dispose();
+            _suscripcionFirebase = _firebaseService.EscucharSolicitudesTaller(_tallerId)
+                .Subscribe(evento =>
+                {
+                    if (evento.Object != null && evento.EventType != Firebase.Database.Streaming.FirebaseEventType.Delete)
+                    {
+                        MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            var sol = evento.Object;
+                            sol.IsExpanded = false;
+
+                            // Revisamos si la solicitud ya existe para no hacerla parpadear si no hay cambios
+                            var existente = SolicitudesActivas.FirstOrDefault(s => s.Id == sol.Id);
+                            if (existente != null)
+                            {
+                                if (existente.Estado == sol.Estado) return; // Ignora los avisos iniciales del websocket
+                                RemoverDeListas(sol.Id);
+                            }
+
+                            // Actualiza las listas
+                            SolicitudesActivas.Add(sol);
+
+                            if (sol.Estado?.Equals("PENDIENTE", StringComparison.OrdinalIgnoreCase) == true)
+                                SolicitudesNuevas.Insert(0, sol);
+                            else if (sol.Estado?.Equals("FINALIZADO", StringComparison.OrdinalIgnoreCase) == true ||
+                                     sol.Estado?.Equals("RECHAZADO", StringComparison.OrdinalIgnoreCase) == true)
+                                SolicitudesFinalizadas.Insert(0, sol);
+                            else
+                                SolicitudesEnGestion.Insert(0, sol);
+
+                            ActualizarMetricas();
+                        });
+                    }
+                });
+        }
+
+        private void RemoverDeListas(string id)
+        {
+            var extActiva = SolicitudesActivas.FirstOrDefault(s => s.Id == id);
+            if (extActiva != null) SolicitudesActivas.Remove(extActiva);
+
+            var extNueva = SolicitudesNuevas.FirstOrDefault(s => s.Id == id);
+            if (extNueva != null) SolicitudesNuevas.Remove(extNueva);
+
+            var extGestion = SolicitudesEnGestion.FirstOrDefault(s => s.Id == id);
+            if (extGestion != null) SolicitudesEnGestion.Remove(extGestion);
+
+            var extFin = SolicitudesFinalizadas.FirstOrDefault(s => s.Id == id);
+            if (extFin != null) SolicitudesFinalizadas.Remove(extFin);
+        }
+
         public async Task CargarServiciosDesdeFirebase()
         {
             var lista = await _firebaseService.GetServiciosAsync(_tallerId);
             MainThread.BeginInvokeOnMainThread(() => {
                 MisServicios.Clear();
                 foreach (var s in lista) MisServicios.Add(s);
-            });
-        }
-
-        public async Task CargarSolicitudesDesdeFirebase()
-        {
-            var lista = await _firebaseService.GetSolicitudesTallerAsync(_tallerId);
-            MainThread.BeginInvokeOnMainThread(() => {
-                SolicitudesActivas.Clear();
-                SolicitudesNuevas.Clear();
-                SolicitudesEnGestion.Clear();
-                SolicitudesFinalizadas.Clear();
-
-                foreach (var s in lista.OrderByDescending(s => s.Fecha))
-                {
-                    s.IsExpanded = false;
-                    SolicitudesActivas.Add(s);
-
-                    if (s.Estado?.Equals("PENDIENTE", StringComparison.OrdinalIgnoreCase) == true)
-                    {
-                        SolicitudesNuevas.Add(s);
-                    }
-                    else if (s.Estado?.Equals("FINALIZADO", StringComparison.OrdinalIgnoreCase) == true ||
-                             s.Estado?.Equals("RECHAZADO", StringComparison.OrdinalIgnoreCase) == true)
-                    {
-                        SolicitudesFinalizadas.Add(s);
-                    }
-                    else
-                    {
-                        // Cualquier otra cosa está en gestión
-                        SolicitudesEnGestion.Add(s);
-                    }
-                }
-                ActualizarMetricas();
             });
         }
 
@@ -134,8 +187,6 @@ namespace AutoShift.ViewModels
             IsServiciosVisible = !IsSolicitudesVisible;
             TabSolicitudesColor = IsSolicitudesVisible ? Color.FromArgb("#FFC107") : Color.FromArgb("#1A1A1D");
             TabServiciosColor = IsServiciosVisible ? Color.FromArgb("#FFC107") : Color.FromArgb("#1A1A1D");
-
-            if (IsSolicitudesVisible) _ = CargarSolicitudesDesdeFirebase();
         }
 
         [RelayCommand]
@@ -143,24 +194,6 @@ namespace AutoShift.ViewModels
         {
             if (solicitud == null) return;
             var parameters = new Dictionary<string, object> { { "Solicitud", solicitud } };
-            await Shell.Current.GoToAsync("CotizacionPage", parameters);
-        }
-
-        // --- NUEVOS COMANDOS DE ACCIÓN DIRECTA ---
-
-        [RelayCommand]
-        private async Task IrACotizar(SolicitudServicio solicitud)
-        {
-            if (solicitud == null) return;
-            var parameters = new Dictionary<string, object> { { "Solicitud", solicitud }, { "AccionDirecta", "Cotizar" } };
-            await Shell.Current.GoToAsync("CotizacionPage", parameters);
-        }
-
-        [RelayCommand]
-        private async Task IrAProgramarCita(SolicitudServicio solicitud)
-        {
-            if (solicitud == null) return;
-            var parameters = new Dictionary<string, object> { { "Solicitud", solicitud }, { "AccionDirecta", "Agendar" } };
             await Shell.Current.GoToAsync("CotizacionPage", parameters);
         }
 
@@ -207,6 +240,7 @@ namespace AutoShift.ViewModels
         [RelayCommand]
         private async Task CerrarSesion()
         {
+            _suscripcionFirebase?.Dispose();
             Preferences.Clear();
             await Shell.Current.GoToAsync("//LoginPage");
         }

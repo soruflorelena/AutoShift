@@ -4,21 +4,19 @@ namespace AutoShift.Views
 {
     public partial class MainClientePage : ContentPage
     {
+        private MainClienteViewModel _viewModel;
+
         public MainClientePage()
         {
             InitializeComponent();
-            // Esto es lo que "llena" la página con los datos del ViewModel
-            BindingContext = new MainClienteViewModel();
+            _viewModel = new MainClienteViewModel();
+            BindingContext = _viewModel;
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
-            // Forzar recarga cada vez que entramos a la página
-            if (BindingContext is MainClienteViewModel vm)
-            {
-                vm.CargarTalleresCommand.Execute(null);
-            }
+            await _viewModel.InicializarDatosAsync();
         }
     }
 }

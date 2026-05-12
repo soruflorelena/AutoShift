@@ -4,20 +4,26 @@ namespace AutoShift.Views;
 
 public partial class MisSolicitudesPage : ContentPage
 {
+    private MisSolicitudesViewModel _viewModel;
+
     public MisSolicitudesPage()
     {
         InitializeComponent();
-        BindingContext = new MisSolicitudesViewModel();
+        _viewModel = new MisSolicitudesViewModel();
+        BindingContext = _viewModel;
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
-        // Dispara la carga de datos cada vez que la vista aparece en pantalla
-        if (BindingContext is ViewModels.MisSolicitudesViewModel vm)
+        if (_viewModel != null)
         {
-            vm.RefrescarSolicitudesCommand.Execute(null);
+            await _viewModel.InicializarDatosAsync();
         }
     }
 
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+    }
 }

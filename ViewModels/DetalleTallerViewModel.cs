@@ -30,7 +30,6 @@ namespace AutoShift.ViewModels
             _firebaseService = new FirebaseService();
         }
 
-        // Se ejecuta cuando se recibe el taller por navegación
         partial void OnTallerSeleccionadoChanged(Taller? value)
         {
             if (value != null)
@@ -146,7 +145,6 @@ namespace AutoShift.ViewModels
         }
     }
 
-    // Clase auxiliar para la lista con Checkbox
     public class ServicioSeleccionable : ObservableObject
     {
         public Servicio DatosServicio { get; set; } = new Servicio();
