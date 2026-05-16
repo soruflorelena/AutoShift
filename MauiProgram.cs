@@ -1,6 +1,7 @@
 ﻿using AutoShift.ViewModels;
 using AutoShift.Views;
 using CommunityToolkit.Maui;
+using Microsoft.Extensions.Logging;
 
 namespace AutoShift
 {
