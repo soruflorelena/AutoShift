@@ -5,9 +5,6 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Linq;
-using System;
 
 namespace AutoShift.ViewModels
 {
@@ -102,11 +99,69 @@ namespace AutoShift.ViewModels
         }
 
         [RelayCommand]
+        private async Task AceptarSolicitud(SolicitudServicio solicitud)
+        {
+            var resultado = await Application.Current.MainPage.ShowPopupAsync(new CustomConfirmPopup("Aceptar Cotización", "¿Estás de acuerdo con los precios y deseas aceptar el servicio?"));
+            if (resultado is bool val && val)
+            {
+                IsBusy = true;
+                solicitud.Estado = "ACEPTADO";
+                await _firebaseService.GuardarSolicitudTaller(solicitud.TallerId, solicitud);
+                await _firebaseService.GuardarSolicitudCliente(_clienteId, solicitud);
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Éxito", "Cotización aceptada. El taller agendará tu cita."));
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task RechazarSolicitud(SolicitudServicio solicitud)
+        {
+            var resultado = await Application.Current.MainPage.ShowPopupAsync(new CustomConfirmPopup("Rechazar", "¿Seguro que quieres rechazar esta cotización?"));
+            if (resultado is bool val && val)
+            {
+                IsBusy = true;
+                solicitud.Estado = "RECHAZADO";
+                await _firebaseService.GuardarSolicitudTaller(solicitud.TallerId, solicitud);
+                await _firebaseService.GuardarSolicitudCliente(_clienteId, solicitud);
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Rechazado", "La solicitud ha sido cancelada."));
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
         private async Task NavegarAResena(SolicitudServicio solicitud)
         {
             if (solicitud == null) return;
             var parameters = new Dictionary<string, object> { { "Solicitud", solicitud } };
             await Shell.Current.GoToAsync("DejarResenaPage", parameters);
+        }
+
+        [RelayCommand]
+        private async Task ConfirmarEntrega(SolicitudServicio solicitud)
+        {
+            if (solicitud == null || !solicitud.EsCompletado) return;
+
+            bool confirm = await Application.Current.MainPage.DisplayAlert("Confirmar Entrega", "¿Confirmas que el vehículo ha sido entregado y el trabajo finalizado?", "SÍ, ENTREGADO", "CANCELAR");
+            if (!confirm) return;
+
+            IsBusy = true;
+            solicitud.Estado = "FINALIZADO";
+
+            var okTaller = await _firebaseService.GuardarSolicitudTaller(solicitud.TallerId, solicitud);
+            var okCliente = await _firebaseService.GuardarSolicitudCliente(_clienteId, solicitud);
+
+            if (okTaller && okCliente)
+            {
+                var parameters = new Dictionary<string, object> { { "Solicitud", solicitud } };
+                await Shell.Current.GoToAsync("DejarResenaPage", parameters);
+
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("¡Trabajo Finalizado!", "Gracias por confiar en AutoShift. Por favor, califica el servicio."));
+            }
+            else
+            {
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Error", "Ocurrió un problema al actualizar el estado."));
+            }
+            IsBusy = false;
         }
     }
 }

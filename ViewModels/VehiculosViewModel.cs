@@ -1,10 +1,10 @@
 using AutoShift.Models;
 using AutoShift.Services;
+using AutoShift.Views;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using CommunityToolkit.Maui.Views;
-using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {

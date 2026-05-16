@@ -4,8 +4,6 @@ using AutoShift.Views;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Maui.Views;
-using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {
@@ -39,28 +37,25 @@ namespace AutoShift.ViewModels
                 Comentario = Comentario?.Trim() ?? string.Empty
             };
 
-            // 1. Guardar la reseña en el nodo del taller
             bool resenaGuardada = await _firebaseService.GuardarResenaTaller(SolicitudSeleccionada.TallerId, nuevaResena);
 
             if (resenaGuardada)
             {
-                // 2. Obtener todas las reseñas para recalcular el promedio
                 var todasLasResenas = await _firebaseService.GetResenasTallerAsync(SolicitudSeleccionada.TallerId);
                 double nuevoPromedio = todasLasResenas.Any() ? todasLasResenas.Average(r => r.Calificacion) : Calificacion;
                 int totalResenas = todasLasResenas.Count;
 
-                // 3. Actualizar la metadata del taller
                 await _firebaseService.ActualizarCalificacionTaller(SolicitudSeleccionada.TallerId, Math.Round(nuevoPromedio, 1), totalResenas);
 
-                // 4. Marcar la solicitud como calificada en ambas BD (Cliente y Taller)
                 SolicitudSeleccionada.TallerCalificado = true;
                 SolicitudSeleccionada.MiCalificacion = Calificacion;
 
                 await _firebaseService.MarcarSolicitudComoCalificada(
                     nuevaResena.ClienteId,
-                    SolicitudSeleccionada.TallerId, // Enviamos el ID del taller
+                    SolicitudSeleccionada.TallerId,
                     SolicitudSeleccionada.Id,
-                    Calificacion);
+                    Calificacion,
+                    nuevaResena.Comentario);
 
                 IsBusy = false;
                 await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("¡Gracias!", "Tu calificación ha sido enviada con éxito."));

@@ -1,6 +1,3 @@
-using System;
-using Microsoft.Maui.Controls;
-
 namespace AutoShift.Converters
 {
     public class ExpandedToTextConverter : IValueConverter

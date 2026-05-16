@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace AutoShift.Converters
 {
@@ -7,7 +6,10 @@ namespace AutoShift.Converters
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return value?.ToString() == parameter?.ToString();
+            if (parameter != null)
+                return value?.ToString() == parameter?.ToString();
+
+            return !string.IsNullOrWhiteSpace(value?.ToString());
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

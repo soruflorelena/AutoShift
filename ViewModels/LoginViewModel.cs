@@ -1,9 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using AutoShift.Services;
-using AutoShift.Models;
-using CommunityToolkit.Maui.Views;
+﻿using AutoShift.Services;
 using AutoShift.Views;
+using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 
 namespace AutoShift.ViewModels
@@ -24,7 +23,6 @@ namespace AutoShift.ViewModels
         [RelayCommand]
         private async Task Ingresar()
         {
-            // 1. Validación básica
             if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
             {
                 await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Atención", "Por favor ingresa tus credenciales."));
@@ -34,18 +32,20 @@ namespace AutoShift.ViewModels
             IsBusy = true;
             try
             {
-                // 2. Intentar Login
                 var usuario = await _firebaseService.Login(Email, Password);
 
                 if (usuario != null)
                 {
-                    // 3. GUARDAR SESIÓN (Esto es lo que usamos en las otras pantallas)
                     Preferences.Set("UsuarioId", usuario.Id);
                     Preferences.Set("UsuarioNombre", usuario.NombreCompleto);
                     Preferences.Set("UsuarioRol", usuario.Rol);
                     Preferences.Set("UsuarioCiudad", usuario.Ciudad);
+                    Preferences.Set("UsuarioTelefono", usuario.Telefono);
+                    Preferences.Set("UsuarioCalle", usuario.Calle);
+                    Preferences.Set("UsuarioColonia", usuario.Colonia);
+                    Preferences.Set("UsuarioCP", usuario.CodigoPostal);
+                    Preferences.Set("UsuarioReferencias", usuario.Referencias);
 
-                    // 4. NAVEGACIÓN SEGÚN EL ROL
                     if (usuario.Rol == "Taller")
                     {
                         await Shell.Current.GoToAsync("//MainTallerPage");

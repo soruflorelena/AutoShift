@@ -1,52 +1,70 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace AutoShift.Models
 {
-    public class Taller
+    public partial class Taller : ObservableObject
     {
-        public string Id { get; set; } = string.Empty;
-        public string Nombre { get; set; } = string.Empty;
-        public string Ubicacion { get; set; } = string.Empty;
-        public string FotoUrl { get; set; } = "taller_placeholder.png";
-        public List<Servicio> Servicios { get; set; } = new();
-        public double CalificacionPromedio { get; set; } = 0.0;
-        public int TotalResenas { get; set; } = 0;
+        [ObservableProperty] private string id = string.Empty;
+        [ObservableProperty] private string nombre = string.Empty;
+        [ObservableProperty] private string ubicacion = string.Empty; // Ciudad
+        [ObservableProperty] private string telefono = string.Empty;
+        [ObservableProperty] private string calle = string.Empty;
+        [ObservableProperty] private string colonia = string.Empty;
+        [ObservableProperty] private string codigoPostal = string.Empty;
+        [ObservableProperty] private string referencias = string.Empty;
+        [ObservableProperty] private double calificacionPromedio = 0.0;
+        [ObservableProperty] private int totalResenas = 0;
+
+        public string DireccionCompleta
+        {
+            get
+            {
+                var partes = new List<string>();
+                if (!string.IsNullOrWhiteSpace(Calle)) partes.Add(Calle);
+                if (!string.IsNullOrWhiteSpace(Colonia)) partes.Add(Colonia);
+                if (!string.IsNullOrWhiteSpace(CodigoPostal)) partes.Add($"CP {CodigoPostal}");
+                if (!string.IsNullOrWhiteSpace(Ubicacion)) partes.Add(Ubicacion);
+
+                return partes.Count > 0 ? string.Join(", ", partes) : "Ubicación no disponible";
+            }
+        }
     }
 
-    public class SolicitudServicio : ObservableObject
+    public partial class SolicitudServicio : ObservableObject
     {
-        public string Id { get; set; } = string.Empty;
-        public DateTime Fecha { get; set; }
-        public string Estado { get; set; } = string.Empty;
-        public string DescripcionProblema { get; set; } = string.Empty;
-        public string ClienteId { get; set; } = string.Empty;
-        public string ClienteNombre { get; set; } = string.Empty;
-        public string TallerId { get; set; } = string.Empty;
-        public string TallerNombre { get; set; } = string.Empty;
-        public string VehiculoId { get; set; } = string.Empty;
-        public string VehiculoMarca { get; set; } = string.Empty;
-        public string VehiculoModelo { get; set; } = string.Empty;
-        public int VehiculoAnio { get; set; }
-        public string VehiculoPlacas { get; set; } = string.Empty;
-        public List<string> ServiciosSolicitados { get; set; } = new();
-        public string DiagnosticoCliente { get; set; } = string.Empty;
-        public Cotizacion? Cotizacion { get; set; }
-        public DateTime? FechaCita { get; set; }
-        public string MensajeTaller { get; set; } = string.Empty;
-        public DateTime? FechaPropuesta { get; set; }
-        public List<DateTime> FechasAlternativas { get; set; } = new();
-        public DateTime? FechaValidada { get; set; }
-        public string MensajeCliente { get; set; } = string.Empty;
+        [ObservableProperty] private string id = string.Empty;
+        [ObservableProperty] private DateTime fecha;
+        [ObservableProperty] private string estado = string.Empty;
+        [ObservableProperty] private string descripcionProblema = string.Empty;
+        [ObservableProperty] private string clienteId = string.Empty;
+        [ObservableProperty] private string clienteNombre = string.Empty;
+        [ObservableProperty] private string clienteTelefono = string.Empty;
+        [ObservableProperty] private string tallerId = string.Empty;
+        [ObservableProperty] private string tallerNombre = string.Empty;
+        [ObservableProperty] private string vehiculoId = string.Empty;
+        [ObservableProperty] private string vehiculoMarca = string.Empty;
+        [ObservableProperty] private string vehiculoModelo = string.Empty;
+        [ObservableProperty] private int vehiculoAnio;
+        [ObservableProperty] private string vehiculoPlacas = string.Empty;
+        [ObservableProperty] private List<string> serviciosSolicitados = new();
+        [ObservableProperty] private string diagnosticoCliente = string.Empty;
+        [ObservableProperty] private Cotizacion? cotizacion;
+        [ObservableProperty] private DateTime? fechaCita;
+        [ObservableProperty] private string mensajeTaller = string.Empty;
+        [ObservableProperty] private DateTime? fechaPropuesta;
+        [ObservableProperty] private List<DateTime> fechasAlternativas = new();
+        [ObservableProperty] private DateTime? fechaValidada;
+        [ObservableProperty] private string mensajeCliente = string.Empty;
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(TextoVerDetalle))]
         private bool isExpanded;
-        public bool IsExpanded
-        {
-            get => isExpanded;
-            set => SetProperty(ref isExpanded, value);
-        }
+
+        public string TextoVerDetalle => IsExpanded ? "OCULTAR DETALLES" : "VER DETALLES";
+        public string TelefonoTexto => string.IsNullOrWhiteSpace(ClienteTelefono) ? "Teléfono: No disponible" : $"Teléfono: {ClienteTelefono}";
+        public string FechaSolicitudTexto => $"Fecha solicitud: {Fecha:dd/MM/yyyy HH:mm}";
+        public string ObservacionesTexto => string.IsNullOrWhiteSpace(DiagnosticoCliente) ? "Observaciones: Sin información adicional" : $"Observaciones: {DiagnosticoCliente}";
+        public string CostoTotalTexto => Cotizacion != null ? $"Costo total: ${Cotizacion.CostoTotal:F2}" : string.Empty;
 
         public string VehiculoInfo => $"{VehiculoMarca} {VehiculoModelo} ({VehiculoAnio})";
         public string ServiciosSolicitadosTexto => ServiciosSolicitados != null && ServiciosSolicitados.Any()
@@ -69,14 +87,6 @@ namespace AutoShift.Models
         public bool EsEnProceso => Estado?.Equals("EN_PROCESO", StringComparison.OrdinalIgnoreCase) == true;
         public bool EsCompletado => Estado?.Equals("COMPLETADO", StringComparison.OrdinalIgnoreCase) == true;
         public bool EsFinalizado => Estado?.Equals("FINALIZADO", StringComparison.OrdinalIgnoreCase) == true;
-        public bool EsNecesitaInspeccion => Estado?.Equals("NECESITA_INSPECCION", StringComparison.OrdinalIgnoreCase) == true;
-        public bool EsInspeccionSolicitada => Estado?.Equals("INSPECCION_SOLICITADA", StringComparison.OrdinalIgnoreCase) == true;
-        public bool EsInspeccionAceptada => Estado?.Equals("INSPECCION_ACEPTADA", StringComparison.OrdinalIgnoreCase) == true;
-        public bool EsFechaPropuesta => Estado?.Equals("FECHA_PROPUESTA", StringComparison.OrdinalIgnoreCase) == true;
-        public bool EsFechaRechazada => Estado?.Equals("FECHA_RECHAZADA", StringComparison.OrdinalIgnoreCase) == true;
-        public bool EsFechasPropuestas => Estado?.Equals("FECHAS_PROPUESTAS", StringComparison.OrdinalIgnoreCase) == true;
-        public bool EsFechaValidada => Estado?.Equals("FECHA_VALIDADA", StringComparison.OrdinalIgnoreCase) == true;
-        public bool EsInspeccionRealizada => Estado?.Equals("INSPECCION_REALIZADA", StringComparison.OrdinalIgnoreCase) == true;
 
         public string EstadoTexto
         {
@@ -92,39 +102,43 @@ namespace AutoShift.Models
                     "EN_PROCESO" => "En proceso",
                     "COMPLETADO" => "Completado",
                     "FINALIZADO" => "Finalizado",
-                    "NECESITA_INSPECCION" => "Requiere inspección",
-                    "INSPECCION_SOLICITADA" => "Inspección solicitada",
-                    "INSPECCION_ACEPTADA" => "Inspección aceptada",
-                    "FECHA_PROPUESTA" => "Fecha propuesta",
-                    "FECHA_RECHAZADA" => "Fecha rechazada",
-                    "FECHAS_PROPUESTAS" => "Fechas propuestas",
-                    "FECHA_VALIDADA" => "Fecha validada",
-                    "INSPECCION_REALIZADA" => "Inspección realizada",
                     _ => Estado
                 };
             }
         }
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(MostrarBotonCalificar))]
         private bool tallerCalificado = false;
-        public bool TallerCalificado
-        {
-            get => tallerCalificado;
-            set
-            {
-                SetProperty(ref tallerCalificado, value);
-                OnPropertyChanged(nameof(MostrarBotonCalificar));
-            }
-        }
 
-        private int miCalificacion = 0;
-        public int MiCalificacion
-        {
-            get => miCalificacion;
-            set => SetProperty(ref miCalificacion, value);
-        }
+        [ObservableProperty] private int miCalificacion = 0;
+        [ObservableProperty] private string miComentarioResena = string.Empty;
 
-        // Esta propiedad nos ayudará a ocultar el botón sin usar Converters complejos
         public bool MostrarBotonCalificar => !TallerCalificado;
+        partial void OnEstadoChanged(string value)
+        {
+            OnPropertyChanged(nameof(EsPendiente));
+            OnPropertyChanged(nameof(EsCotizado));
+            OnPropertyChanged(nameof(EsAceptado));
+            OnPropertyChanged(nameof(EsRechazado));
+            OnPropertyChanged(nameof(EsCitaAsignada));
+            OnPropertyChanged(nameof(EsEnProceso));
+            OnPropertyChanged(nameof(EsCompletado));
+            OnPropertyChanged(nameof(EsFinalizado));
+            OnPropertyChanged(nameof(EstadoTexto));
+        }
+
+        partial void OnCotizacionChanged(Cotizacion? value)
+        {
+            OnPropertyChanged(nameof(TieneCotizacion));
+            OnPropertyChanged(nameof(CostoTotalTexto));
+        }
+
+        partial void OnFechaCitaChanged(DateTime? value)
+        {
+            OnPropertyChanged(nameof(TieneCita));
+            OnPropertyChanged(nameof(FechaCitaTexto));
+        }
     }
 
 
@@ -141,6 +155,7 @@ namespace AutoShift.Models
         public string Nombre { get; set; } = string.Empty;
         public decimal Precio { get; set; }
         public int Cantidad { get; set; } = 1;
+        public decimal Subtotal => Precio * Cantidad;
     }
 
     public class Diagnostico

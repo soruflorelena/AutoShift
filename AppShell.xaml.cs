@@ -1,6 +1,4 @@
-﻿using AutoShift.Views;
-
-namespace AutoShift
+﻿namespace AutoShift
 {
     public partial class AppShell : Shell
     {

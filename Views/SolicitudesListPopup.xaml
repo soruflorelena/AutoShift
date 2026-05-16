@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:AutoShift.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="AutoShift.Views.SolicitudesListPopup"
+             BackgroundColor="Transparent">
+
+    <Frame CornerRadius="20" HasShadow="True" Padding="0" Margin="20" BorderColor="Transparent">
+        <Frame.Background>
+            <SolidColorBrush Color="#111418"/>
+        </Frame.Background>
+        
+        <Grid RowDefinitions="Auto, *" BackgroundColor="#111418">
+            
+            <Grid Grid.Row="0" Padding="20,15" BackgroundColor="#111418" ColumnDefinitions="*, Auto">
+                <Label Text="{Binding TituloPopup}" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center"/>
+                <Button Grid.Column="1" Text="✕" Command="{Binding CerrarCommand}" 
+                        BackgroundColor="Transparent" TextColor="#8899A6" FontSize="20" Padding="0" WidthRequest="40" HeightRequest="40"/>
+            </Grid>
+            <ScrollView Grid.Row="1" Margin="0">
+                <VerticalStackLayout Padding="15,10" Spacing="10" MaximumWidthRequest="400">
+                    <CollectionView ItemsSource="{Binding SolicitudesActuales}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="No hay solicitudes disponibles" TextColor="#5B7083" HorizontalTextAlignment="Center" Margin="0,20"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:SolicitudServicio">
+                                <toolkit:Expander IsExpanded="{Binding IsExpanded}" BackgroundColor="#15191E" Margin="0,0,0,10" Padding="0">
+                                    <toolkit:Expander.Header>
+                                        <Border BackgroundColor="#15191E" Padding="15" StrokeThickness="0" StrokeShape="RoundRectangle 12">
+                                            <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto" RowSpacing="8">
+                                                <VerticalStackLayout Spacing="3" Grid.Row="0">
+                                                    <Label Text="{Binding VehiculoInfo}" TextColor="White" FontSize="14" FontAttributes="Bold"/>
+                                                    <Label Text="{Binding ClienteNombre}" TextColor="#8899A6" FontSize="11"/>
+                                                </VerticalStackLayout>
+                                                <Border Grid.Row="0" Grid.Column="1" BackgroundColor="#222B36" Padding="8,4" StrokeShape="RoundRectangle 6" HorizontalOptions="End">
+                                                    <Label Text="{Binding EstadoTexto}" TextColor="#FFB01F" FontSize="9" FontAttributes="Bold"/>
+                                                </Border>
+                                                <Button Grid.Row="1" Grid.ColumnSpan="2" Text="GESTIONAR" 
+                                                        Command="{Binding Path=BindingContext.ResponderSolicitudCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                        CommandParameter="{Binding .}"
+                                                        BackgroundColor="#FFB300" TextColor="#090A0F" FontSize="11" FontAttributes="Bold" CornerRadius="8" HeightRequest="38">
+                                                    <Button.Triggers>
+                                                        <DataTrigger TargetType="Button" Binding="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EsFinalizadas}" Value="True">
+                                                            <Setter Property="IsVisible" Value="False"/>
+                                                        </DataTrigger>
+                                                    </Button.Triggers>
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+                                    </toolkit:Expander.Header>
+                                    <toolkit:Expander.Content>
+                                        <Border BackgroundColor="#0F172A" Padding="12" Margin="0" StrokeThickness="1" Stroke="#243248" StrokeShape="RoundRectangle 10">
+                                            <VerticalStackLayout Spacing="8">
+                                                <Label Text="{Binding TelefonoTexto}" TextColor="#9CA3AF" FontSize="12"/>
+                                                <Label Text="{Binding ServiciosSolicitadosTexto, StringFormat='Servicios: {0}'}" TextColor="#9CA3AF" FontSize="12" LineBreakMode="WordWrap"/>
+                                                <Label Text="{Binding ObservacionesTexto}" TextColor="#9CA3AF" FontSize="12" LineBreakMode="WordWrap"/>
+                                                <Label IsVisible="{Binding TieneCita}" Text="{Binding FechaCitaTexto, StringFormat='Cita: {0}'}" TextColor="#9CA3AF" FontSize="12"/>
+                                                <Label IsVisible="{Binding TieneCotizacion}" Text="{Binding CostoTotalTexto}" TextColor="#9CA3AF" FontSize="12"/>
+
+                                                <VerticalStackLayout IsVisible="{Binding TallerCalificado}" Spacing="2" Margin="0,5,0,0">
+                                                    <BoxView HeightRequest="1" Color="#243248" Margin="0,5"/>
+                                                    <Label Text="CALIFICACIÓN DEL CLIENTE" TextColor="#FFB01F" FontSize="9" FontAttributes="Bold"/>
+                                                    <Label Text="{Binding MiCalificacion, StringFormat='{0} ★'}" TextColor="White" FontSize="13" FontAttributes="Bold"/>
+                                                    <Label Text="{Binding MiComentarioResena}" TextColor="#9CA3AF" FontSize="11" FontAttributes="Italic" LineBreakMode="WordWrap"/>
+                                                </VerticalStackLayout>
+
+                                                <Label Text="{Binding FechaSolicitudTexto}" TextColor="#8899A6" FontSize="10"/>
+                                            </VerticalStackLayout>
+                                        </Border>
+                                    </toolkit:Expander.Content>
+                                </toolkit:Expander>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </ScrollView>
+
+        </Grid>
+    </Frame>
+
+</ContentPage>

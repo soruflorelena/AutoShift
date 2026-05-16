@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AutoShift.Models
+﻿namespace AutoShift.Models
 {
     public class Usuario
     {
@@ -13,7 +11,6 @@ namespace AutoShift.Models
         public string Rol { get; set; } = string.Empty; // "Taller" o "Cliente"
         public string Telefono { get; set; } = string.Empty;
 
-        // CAMPOS QUE FALTABAN PARA EL REGISTRO:
         public string CodigoPostal { get; set; } = string.Empty;
         public string Estado { get; set; } = string.Empty;
         public string Ciudad { get; set; } = string.Empty;

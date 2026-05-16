@@ -23,10 +23,28 @@ namespace AutoShift.Services
             return firebase.Child("Usuarios").Child(clienteId).Child("Solicitudes").AsObservable<SolicitudServicio>();
         }
 
-        // --- USUARIOS ---
         public async Task<bool> RegistrarUsuario(Usuario usuario)
         {
-            try { await firebase.Child("Usuarios").PostAsync(usuario); return true; }
+            try
+            {
+                var result = await firebase.Child("Usuarios").PostAsync(usuario);
+
+                if (usuario.Rol == "Taller")
+                {
+                    await firebase.Child("Talleres").Child(result.Key).PutAsync(new Taller
+                    {
+                        Id = result.Key,
+                        Nombre = usuario.NombreCompleto,
+                        Ubicacion = usuario.Ciudad,
+                        Telefono = usuario.Telefono,
+                        Calle = usuario.Calle,
+                        Colonia = usuario.Colonia,
+                        CodigoPostal = usuario.CodigoPostal,
+                        Referencias = usuario.Referencias
+                    });
+                }
+                return true;
+            }
             catch { return false; }
         }
 
@@ -55,8 +73,6 @@ namespace AutoShift.Services
                 return null;
             }
         }
-
-        // --- TALLERES ---
         public async Task<bool> ActualizarDatosTaller(Taller taller)
         {
             try
@@ -64,7 +80,12 @@ namespace AutoShift.Services
                 await firebase.Child("Talleres").Child(taller.Id).PatchAsync(new
                 {
                     Nombre = taller.Nombre,
-                    Ubicacion = taller.Ubicacion
+                    Ubicacion = taller.Ubicacion,
+                    Telefono = taller.Telefono,
+                    Calle = taller.Calle,
+                    Colonia = taller.Colonia,
+                    CodigoPostal = taller.CodigoPostal,
+                    Referencias = taller.Referencias
                 });
                 return true;
             }
@@ -211,29 +232,30 @@ namespace AutoShift.Services
             catch { return false; }
         }
 
-        // --- CLIENTE ---
         public async Task<List<Taller>> GetAllTalleresAsync()
         {
             try
             {
-                var result = await firebase.Child("Talleres").OnceAsync<dynamic>();
-                var lista = new List<Taller>();
-
-                foreach (var item in result)
+                var result = await firebase.Child("Talleres").OnceAsync<Taller>();
+                return result.Select(x =>
                 {
-                    lista.Add(new Taller
-                    {
-                        Id = item.Key,
-                        Nombre = item.Object?.Nombre?.ToString() ?? "Taller Desconocido",
-                        Ubicacion = item.Object?.Ubicacion?.ToString() ?? "Ubicación no disponible"
-                    });
-                }
-                return lista;
+                    var t = x.Object;
+                    t.Id = x.Key;
+                    return t;
+                }).ToList();
             }
-            catch { return new List<Taller>(); }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error en GetAllTalleresAsync: {ex.Message}");
+                return new List<Taller>();
+            }
         }
 
-        // --- RESEÑAS ---
+        public IObservable<FirebaseEvent<Taller>> EscucharTalleres()
+        {
+            return firebase.Child("Talleres").AsObservable<Taller>();
+        }
+
         public async Task<bool> GuardarResenaTaller(string tallerId, Resena resena)
         {
             try
@@ -268,15 +290,15 @@ namespace AutoShift.Services
             catch { return false; }
         }
 
-        public async Task<bool> MarcarSolicitudComoCalificada(string clienteId, string tallerId, string solicitudId, int calificacion)
+        public async Task<bool> MarcarSolicitudComoCalificada(string clienteId, string tallerId, string solicitudId, int calificacion, string comentario)
         {
             try
             {
                 await firebase.Child("Usuarios").Child(clienteId).Child("Solicitudes").Child(solicitudId)
-                    .PatchAsync(new { TallerCalificado = true, MiCalificacion = calificacion });
+                    .PatchAsync(new { TallerCalificado = true, MiCalificacion = calificacion, MiComentarioResena = comentario });
 
                 await firebase.Child("Talleres").Child(tallerId).Child("Solicitudes").Child(solicitudId)
-                    .PatchAsync(new { TallerCalificado = true, MiCalificacion = calificacion });
+                    .PatchAsync(new { TallerCalificado = true, MiCalificacion = calificacion, MiComentarioResena = comentario });
 
                 return true;
             }

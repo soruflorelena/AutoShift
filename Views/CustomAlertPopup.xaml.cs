@@ -15,7 +15,6 @@ public partial class CustomAlertPopup : Popup
 
     private void OnOkClicked(object sender, EventArgs e)
     {
-        // Cierra el popup al hacer clic en ENTENDIDO
         Close();
     }
 }

@@ -50,8 +50,8 @@
                     <Border Grid.Column="1" BackgroundColor="#16191E" Stroke="#2E333D" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="20">
                         <VerticalStackLayout Spacing="10">
                             <BoxView WidthRequest="20" HeightRequest="2" Color="#4F5664" HorizontalOptions="Start"/>
-                            <Label Text="Historial" TextColor="White" FontAttributes="Bold" FontSize="15"/>
-                            <Label Text="Servicios" FontSize="11" TextColor="#4F5664"/>
+                            <Label Text="Solicitudes" TextColor="White" FontAttributes="Bold" FontSize="15"/>
+                            <Label Text="Historial" FontSize="11" TextColor="#4F5664"/>
                         </VerticalStackLayout>
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding IrAMisSolicitudesCommand}"/>
@@ -60,52 +60,62 @@
                 </Grid>
 
                 <VerticalStackLayout Spacing="15" IsVisible="{Binding TieneSolicitudesActivas}">
-                    <Label Text="SOLICITUDES EN MARCHA" TextColor="#4F5664" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5"/>
+                    <Label Text="SEGUIMIENTO DE SERVICIOS" TextColor="#FFC107" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5"/>
                     <CollectionView ItemsSource="{Binding SolicitudesActivas}" SelectionMode="None">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:SolicitudServicio">
-                                <Border BackgroundColor="#0F1115" Stroke="#FFC107" StrokeThickness="1" StrokeShape="RoundRectangle 12" Margin="0,0,0,12" Padding="15">
-                                    <VerticalStackLayout Spacing="10">
+                                <Border BackgroundColor="#16191E" Stroke="#1A1D23" StrokeThickness="1" Padding="18" Margin="0,0,0,12" StrokeShape="RoundRectangle 16">
+                                    <VerticalStackLayout Spacing="12">
                                         <Grid ColumnDefinitions="*, Auto">
-                                            <VerticalStackLayout>
+                                            <VerticalStackLayout Spacing="2">
                                                 <Label Text="{Binding VehiculoInfo}" TextColor="White" FontAttributes="Bold" FontSize="15"/>
                                                 <Label Text="{Binding TallerNombre}" TextColor="#4F5664" FontSize="12"/>
                                             </VerticalStackLayout>
-                                            <Label Grid.Column="1" Text="{Binding EstadoTexto}" TextColor="#FFC107" FontAttributes="Bold" FontSize="10" VerticalOptions="Center"/>
+                                            <Border Grid.Column="1" BackgroundColor="#221C0F" Stroke="#FFC107" StrokeThickness="1" StrokeShape="RoundRectangle 6" Padding="8,4">
+                                                <Label Text="{Binding EstadoTexto}" TextColor="#FFC107" FontSize="10" FontAttributes="Bold"/>
+                                            </Border>
                                         </Grid>
 
-                                        <Border IsVisible="{Binding TieneCita}" BackgroundColor="#16191E" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="12,10" Margin="0,5">
-                                            <VerticalStackLayout Spacing="2">
-                                                <Label Text="FECHA DE TU CITA:" TextColor="#3B82F6" FontSize="9" FontAttributes="Bold"/>
-                                                <Label Text="{Binding FechaCitaTexto}" TextColor="White" FontSize="13" FontAttributes="Bold"/>
-                                            </VerticalStackLayout>
-                                        </Border>
-
-                                        <VerticalStackLayout IsVisible="{Binding TieneCotizacion}" Spacing="5" BackgroundColor="#16191E" Padding="10" Margin="0,2">
-                                            <Label Text="COSTOS ESTIMADOS:" TextColor="#FFC107" FontSize="9" FontAttributes="Bold"/>
-                                            <StackLayout BindableLayout.ItemsSource="{Binding Cotizacion.Detalles}">
-                                                <BindableLayout.ItemTemplate>
-                                                    <DataTemplate x:DataType="models:DetalleServicio">
-                                                        <Grid ColumnDefinitions="*, Auto">
-                                                            <Label Text="{Binding Nombre}" TextColor="#A0AAB5" FontSize="11"/>
-                                                            <Label Grid.Column="1" Text="{Binding Precio, StringFormat='${0:N2}'}" TextColor="White" FontSize="11" FontAttributes="Bold"/>
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </BindableLayout.ItemTemplate>
-                                            </StackLayout>
-                                            <BoxView HeightRequest="1" Color="#2E333D" Margin="0,5"/>
+                                        <VerticalStackLayout IsVisible="{Binding EsCotizado}" Spacing="10">
+                                            <BoxView HeightRequest="1" Color="#1A1D23"/>
+                                            <Label Text="NUEVA COTIZACIÓN RECIBIDA" TextColor="White" FontSize="11" FontAttributes="Bold"/>
                                             <Grid ColumnDefinitions="*, Auto">
-                                                <Label Text="TOTAL" TextColor="White" FontSize="11" FontAttributes="Bold"/>
-                                                <Label Grid.Column="1" Text="{Binding Cotizacion.CostoTotal, StringFormat='${0:N2}'}" TextColor="#22C55E" FontSize="13" FontAttributes="Bold"/>
+                                                <Label Text="Presupuesto estimado:" TextColor="#4F5664" FontSize="12" VerticalOptions="Center"/>
+                                                <Label Grid.Column="1" Text="{Binding Cotizacion.CostoTotal, StringFormat='${0:N2}'}" TextColor="#22C55E" FontSize="16" FontAttributes="Bold"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="*, *" ColumnSpacing="10" Margin="0,5,0,0">
+                                                <Button Text="RECHAZAR"
+                                                        Command="{Binding Path=BindingContext.RechazarSolicitudCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                        CommandParameter="{Binding .}"
+                                                        BackgroundColor="Transparent" BorderColor="#CC2D2D" BorderWidth="1" TextColor="#CC2D2D" HeightRequest="40" CornerRadius="8" FontSize="11"/>
+                                                <Button Grid.Column="1" Text="ACEPTAR"
+                                                        Command="{Binding Path=BindingContext.AceptarSolicitudCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                        CommandParameter="{Binding .}"
+                                                        BackgroundColor="#FFC107" TextColor="#07080A" FontAttributes="Bold" HeightRequest="40" CornerRadius="8" FontSize="11"/>
                                             </Grid>
                                         </VerticalStackLayout>
 
-                                        <Grid ColumnDefinitions="*, *" ColumnSpacing="10" IsVisible="{Binding EsCotizado}">
-                                            <Button Text="RECHAZAR" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainClienteViewModel}}, Path=RechazarSolicitudCommand}" CommandParameter="{Binding .}" BackgroundColor="Transparent" BorderColor="#CC2D2D" BorderWidth="1" TextColor="#CC2D2D" FontSize="10" HeightRequest="38"/>
-                                            <Button Grid.Column="1" Text="ACEPTAR" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainClienteViewModel}}, Path=AceptarSolicitudCommand}" CommandParameter="{Binding .}" BackgroundColor="#22C55E" TextColor="White" FontSize="10" HeightRequest="38"/>
-                                        </Grid>
+                                        <VerticalStackLayout IsVisible="{Binding EsCompletado}" Spacing="10">
+                                            <BoxView HeightRequest="1" Color="#1A1D23"/>
+                                            <Label Text="¡TU VEHÍCULO ESTÁ LISTO!" TextColor="White" FontSize="11" FontAttributes="Bold"/>
+                                            <Button Text="CONFIRMAR ENTREGA Y FINALIZAR"
+                                                    Command="{Binding Path=BindingContext.ConfirmarEntregaCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="#22C55E" TextColor="White" FontAttributes="Bold" HeightRequest="45" CornerRadius="8"/>
+                                        </VerticalStackLayout>
 
-                                        <Button Text="CONFIRMAR ENTREGA Y FINALIZAR" IsVisible="{Binding EsCompletado}" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainClienteViewModel}}, Path=ConfirmarEntregaCommand}" CommandParameter="{Binding .}" BackgroundColor="#10B981" TextColor="White" FontAttributes="Bold" HeightRequest="45" FontSize="11" CornerRadius="8" Margin="0,5,0,0"/>
+                                        <Label IsVisible="{Binding EsAceptado}" Text="Esperando que el taller asigne la fecha de tu cita..." TextColor="#4F5664" FontSize="11" FontAttributes="Italic"/>
+
+                                        <VerticalStackLayout IsVisible="{Binding EsCitaAsignada}" Spacing="4">
+                                            <BoxView HeightRequest="1" Color="#1A1D23"/>
+                                            <Label Text="CITA PROGRAMADA:" TextColor="#4F5664" FontSize="9" FontAttributes="Bold"/>
+                                            <Label Text="{Binding FechaCitaTexto}" TextColor="White" FontSize="13" FontAttributes="Bold"/>
+                                        </VerticalStackLayout>
+
+                                        <HorizontalStackLayout IsVisible="{Binding EsEnProceso}" Spacing="8">
+                                            <BoxView WidthRequest="8" HeightRequest="8" Color="#FFC107" CornerRadius="4" VerticalOptions="Center"/>
+                                            <Label Text="Vehículo en reparación actualmente" TextColor="#FFC107" FontSize="11" FontAttributes="Bold" VerticalOptions="Center"/>
+                                        </HorizontalStackLayout>
 
                                     </VerticalStackLayout>
                                 </Border>
@@ -115,7 +125,7 @@
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Spacing="15">
-                    <Label Text="UNIDADES DE SERVICIO" TextColor="#4F5664" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5"/>
+                    <Label Text="TALLERES DE SERVICIO" TextColor="#4F5664" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5"/>
                     <CollectionView ItemsSource="{Binding Talleres}" SelectionMode="None">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:Taller">

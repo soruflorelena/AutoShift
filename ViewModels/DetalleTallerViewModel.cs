@@ -5,8 +5,6 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using CommunityToolkit.Maui.Views;
-using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {
@@ -24,6 +22,7 @@ namespace AutoShift.ViewModels
 
         public ObservableCollection<ServicioSeleccionable> ServiciosDisponibles { get; } = new();
         public ObservableCollection<Vehiculo> Vehiculos { get; } = new();
+        public ObservableCollection<Resena> Resenas { get; } = new();
 
         public DetalleTallerViewModel()
         {
@@ -36,39 +35,83 @@ namespace AutoShift.ViewModels
             {
                 _ = CargarServicios();
                 _ = CargarVehiculos();
+                _ = CargarResenas();
+            }
+        }
+
+        private async Task CargarResenas()
+        {
+            try
+            {
+                if (TallerSeleccionado == null) return;
+                var lista = await _firebaseService.GetResenasTallerAsync(TallerSeleccionado.Id);
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Resenas.Clear();
+                    if (lista != null)
+                    {
+                        foreach (var r in lista.OrderByDescending(x => x.Fecha)) Resenas.Add(r);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error reseñas: {ex.Message}");
             }
         }
 
         private async Task CargarServicios()
         {
-            if (TallerSeleccionado == null) return;
+            try
+            {
+                if (TallerSeleccionado == null) return;
 
-            IsBusy = true;
-            var servicios = await _firebaseService.GetServiciosAsync(TallerSeleccionado.Id);
+                IsBusy = true;
+                var servicios = await _firebaseService.GetServiciosAsync(TallerSeleccionado.Id);
 
-            MainThread.BeginInvokeOnMainThread(() => {
-                ServiciosDisponibles.Clear();
-                foreach (var s in servicios)
+                MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    var item = new ServicioSeleccionable { DatosServicio = s };
-                    item.OnSelectionChanged = ActualizarSubtotal;
-                    ServiciosDisponibles.Add(item);
-                }
-            });
-            IsBusy = false;
+                    ServiciosDisponibles.Clear();
+                    if (servicios != null)
+                    {
+                        foreach (var s in servicios)
+                        {
+                            var item = new ServicioSeleccionable { DatosServicio = s };
+                            item.OnSelectionChanged = ActualizarSubtotal;
+                            ServiciosDisponibles.Add(item);
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error servicios: {ex.Message}");
+            }
+            finally { IsBusy = false; }
         }
 
         private async Task CargarVehiculos()
         {
-            var clienteId = Preferences.Get("UsuarioId", "");
-            if (string.IsNullOrWhiteSpace(clienteId)) return;
+            try
+            {
+                var clienteId = Preferences.Get("UsuarioId", "");
+                if (string.IsNullOrWhiteSpace(clienteId)) return;
 
-            var lista = await _firebaseService.GetVehiculosClienteAsync(clienteId);
-            MainThread.BeginInvokeOnMainThread(() => {
-                Vehiculos.Clear();
-                foreach (var v in lista) Vehiculos.Add(v);
-                VehiculoSeleccionado = Vehiculos.FirstOrDefault();
-            });
+                var lista = await _firebaseService.GetVehiculosClienteAsync(clienteId);
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Vehiculos.Clear();
+                    if (lista != null)
+                    {
+                        foreach (var v in lista) Vehiculos.Add(v);
+                        VehiculoSeleccionado = Vehiculos.FirstOrDefault();
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error vehiculos: {ex.Message}");
+            }
         }
 
         private void ActualizarSubtotal()
@@ -120,7 +163,8 @@ namespace AutoShift.ViewModels
                 VehiculoAnio = VehiculoSeleccionado?.Anio ?? 0,
                 VehiculoPlacas = VehiculoSeleccionado?.Placas ?? string.Empty,
                 ServiciosSolicitados = serviciosSeleccionados,
-                DiagnosticoCliente = string.IsNullOrWhiteSpace(DescripcionCliente) ? string.Empty : DescripcionCliente.Trim()
+                DiagnosticoCliente = string.IsNullOrWhiteSpace(DescripcionCliente) ? string.Empty : DescripcionCliente.Trim(),
+                ClienteTelefono = Preferences.Get("UsuarioTelefono", string.Empty)
             };
 
             var clientId = Preferences.Get("UsuarioId", "");

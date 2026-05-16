@@ -1,13 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using AutoShift.Models;
+using AutoShift.Services;
+using AutoShift.Views;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using AutoShift.Models;
-using AutoShift.Services;
-using CommunityToolkit.Maui.Views;
-using AutoShift.Views;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
+using System.Collections.ObjectModel;
 
 namespace AutoShift.ViewModels
 {
@@ -23,13 +20,14 @@ namespace AutoShift.ViewModels
         [ObservableProperty] private decimal nuevoPrecio;
         [ObservableProperty] private string nuevasMarcas = string.Empty;
         [ObservableProperty] private string textoBotonGuardar = "GUARDAR EN CATÁLOGO";
+        [ObservableProperty] private bool isEditing = false;
 
         [ObservableProperty] private int nuevasCount;
         [ObservableProperty] private int enCursoCount;
         [ObservableProperty] private decimal gananciasMes;
 
-        [ObservableProperty] private bool isSolicitudesVisible = true;
-        [ObservableProperty] private bool isServiciosVisible = false;
+        [ObservableProperty] private bool isSolicitudesVisible = false;
+        [ObservableProperty] private bool isServiciosVisible = true;
 
         [ObservableProperty] private Color tabSolicitudesColor = Color.FromArgb("#FFC107");
         [ObservableProperty] private Color tabServiciosColor = Color.FromArgb("#1A1A1D");
@@ -53,19 +51,27 @@ namespace AutoShift.ViewModels
             {
                 string nombreTaller = Preferences.Get("UsuarioNombre", "Taller Central");
                 string ciudadTaller = Preferences.Get("UsuarioCiudad", "Sin Ubicación");
+                string telefonoTaller = Preferences.Get("UsuarioTelefono", "No disponible");
+                string calleTaller = Preferences.Get("UsuarioCalle", "");
+                string coloniaTaller = Preferences.Get("UsuarioColonia", "");
+                string cpTaller = Preferences.Get("UsuarioCP", "");
+                string referenciasTaller = Preferences.Get("UsuarioReferencias", "");
 
-                // CARGA RÁPIDA INICIAL
                 await CargarServiciosDesdeFirebase();
                 await CargarSolicitudesRapido();
 
-                // INICIAR TIEMPO REAL
                 IniciarEscuchaEnTiempoReal();
 
                 await _firebaseService.ActualizarDatosTaller(new Taller
                 {
                     Id = _tallerId,
                     Nombre = nombreTaller,
-                    Ubicacion = ciudadTaller
+                    Ubicacion = ciudadTaller,
+                    Telefono = telefonoTaller,
+                    Calle = calleTaller,
+                    Colonia = coloniaTaller,
+                    CodigoPostal = cpTaller,
+                    Referencias = referenciasTaller
                 });
             }
             catch (Exception ex)
@@ -74,7 +80,6 @@ namespace AutoShift.ViewModels
             }
         }
 
-        // CARGA RÁPIDA: Descarga todo de golpe
         public async Task CargarSolicitudesRapido()
         {
             var lista = await _firebaseService.GetSolicitudesTallerAsync(_tallerId);
@@ -102,7 +107,6 @@ namespace AutoShift.ViewModels
             });
         }
 
-        // TIEMPO REAL: Solo actualiza si hay cambios verdaderos
         private void IniciarEscuchaEnTiempoReal()
         {
             _suscripcionFirebase?.Dispose();
@@ -116,15 +120,13 @@ namespace AutoShift.ViewModels
                             var sol = evento.Object;
                             sol.IsExpanded = false;
 
-                            // Revisamos si la solicitud ya existe para no hacerla parpadear si no hay cambios
                             var existente = SolicitudesActivas.FirstOrDefault(s => s.Id == sol.Id);
                             if (existente != null)
                             {
-                                if (existente.Estado == sol.Estado) return; // Ignora los avisos iniciales del websocket
+                                if (existente.Estado == sol.Estado) return; 
                                 RemoverDeListas(sol.Id);
                             }
 
-                            // Actualiza las listas
                             SolicitudesActivas.Add(sol);
 
                             if (sol.Estado?.Equals("PENDIENTE", StringComparison.OrdinalIgnoreCase) == true)
@@ -159,7 +161,8 @@ namespace AutoShift.ViewModels
         public async Task CargarServiciosDesdeFirebase()
         {
             var lista = await _firebaseService.GetServiciosAsync(_tallerId);
-            MainThread.BeginInvokeOnMainThread(() => {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
                 MisServicios.Clear();
                 foreach (var s in lista) MisServicios.Add(s);
             });
@@ -173,6 +176,45 @@ namespace AutoShift.ViewModels
             GananciasMes = SolicitudesActivas
                 .Where(s => s.Estado?.Equals("FINALIZADO", StringComparison.OrdinalIgnoreCase) == true && s.Cotizacion != null)
                 .Sum(s => s.Cotizacion.CostoTotal);
+        }
+
+        [RelayCommand]
+        public async Task MostrarSolicitudesNuevas()
+        {
+            if (SolicitudesNuevas.Count == 0)
+            {
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Nuevas Solicitudes", "No hay solicitudes nuevas"));
+                return;
+            }
+
+            var popup = new Views.SolicitudesListPopup(SolicitudesNuevas, "NUEVAS SOLICITUDES", false);
+            await Shell.Current.CurrentPage.Navigation.PushModalAsync(popup);
+        }
+
+        [RelayCommand]
+        public async Task MostrarSolicitudesEnGestion()
+        {
+            if (SolicitudesEnGestion.Count == 0)
+            {
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("En Gestión", "No hay trabajos en gestión"));
+                return;
+            }
+
+            var popup = new Views.SolicitudesListPopup(SolicitudesEnGestion, "TRABAJOS EN GESTIÓN", false);
+            await Shell.Current.CurrentPage.Navigation.PushModalAsync(popup);
+        }
+
+        [RelayCommand]
+        public async Task MostrarSolicitudesFinalizadas()
+        {
+            if (SolicitudesFinalizadas.Count == 0)
+            {
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("Finalizadas", "No hay solicitudes finalizadas"));
+                return;
+            }
+
+            var popup = new Views.SolicitudesListPopup(SolicitudesFinalizadas, "FINALIZADAS", true);
+            await Shell.Current.CurrentPage.Navigation.PushModalAsync(popup);
         }
 
         [RelayCommand]
@@ -195,6 +237,13 @@ namespace AutoShift.ViewModels
             if (solicitud == null) return;
             var parameters = new Dictionary<string, object> { { "Solicitud", solicitud } };
             await Shell.Current.GoToAsync("CotizacionPage", parameters);
+        }
+
+        [RelayCommand]
+        private void ToggleDetalle(SolicitudServicio solicitud)
+        {
+            if (solicitud == null) return;
+            solicitud.IsExpanded = !solicitud.IsExpanded;
         }
 
         [RelayCommand]
@@ -225,7 +274,14 @@ namespace AutoShift.ViewModels
             NuevoPrecio = s.PrecioBase;
             NuevasMarcas = string.Join(", ", s.MarcasCompatibles);
             TextoBotonGuardar = "ACTUALIZAR SERVICIO";
+            IsEditing = true;
             SwitchTab("Servicios");
+        }
+
+        [RelayCommand]
+        private void CancelarEdicion()
+        {
+            LimpiarCampos();
         }
 
         [RelayCommand]
@@ -251,6 +307,7 @@ namespace AutoShift.ViewModels
             NuevoNombre = NuevaDescripcion = NuevasMarcas = string.Empty;
             NuevoPrecio = 0;
             TextoBotonGuardar = "GUARDAR EN CATÁLOGO";
+            IsEditing = false;
         }
     }
 }

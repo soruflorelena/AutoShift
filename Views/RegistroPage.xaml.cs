@@ -1,5 +1,3 @@
-using AutoShift.ViewModels;
-
 namespace AutoShift.Views;
 
 public partial class RegistroPage : ContentPage

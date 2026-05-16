@@ -1,14 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using AutoShift.Models;
+using AutoShift.Services;
+using AutoShift.Views;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using AutoShift.Models;
-using AutoShift.Services;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
-using CommunityToolkit.Maui.Views;
-using AutoShift.Views;
+using System.Collections.ObjectModel;
 
 namespace AutoShift.ViewModels
 {
@@ -16,7 +12,8 @@ namespace AutoShift.ViewModels
     {
         private readonly FirebaseService _firebaseService;
         private string _clienteId;
-        private IDisposable? _suscripcionFirebase;
+        private IDisposable? _suscripcionSolicitudes;
+        private IDisposable? _suscripcionTalleres;
 
         [ObservableProperty] private bool isBusy;
         [ObservableProperty] private bool tieneSolicitudesActivas;
@@ -39,23 +36,72 @@ namespace AutoShift.ViewModels
             await CargarTalleres();
             await CargarVehiculos();
             await CargarSolicitudesActivasRapido();
+
             IniciarEscuchaSolicitudes();
+            IniciarEscuchaTalleres();
+
             IsBusy = false;
         }
 
         private async Task CargarTalleres()
         {
             var lista = await _firebaseService.GetAllTalleresAsync();
-            MainThread.BeginInvokeOnMainThread(() => {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
                 Talleres.Clear();
                 foreach (var t in lista) Talleres.Add(t);
             });
         }
 
+        private void IniciarEscuchaTalleres()
+        {
+            _suscripcionTalleres?.Dispose();
+            _suscripcionTalleres = _firebaseService.EscucharTalleres()
+                .Subscribe(evento =>
+                {
+                    if (evento != null)
+                    {
+                        MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            try
+                            {
+                                var taller = evento.Object;
+                                var id = evento.Key;
+
+                                var existente = Talleres.FirstOrDefault(t => t.Id == id);
+
+                                if (evento.EventType == Firebase.Database.Streaming.FirebaseEventType.Delete)
+                                {
+                                    if (existente != null) Talleres.Remove(existente);
+                                }
+                                else if (taller != null)
+                                {
+                                    taller.Id = id;
+                                    if (existente != null)
+                                    {
+                                        int index = Talleres.IndexOf(existente);
+                                        Talleres[index] = taller;
+                                    }
+                                    else
+                                    {
+                                        Talleres.Add(taller);
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Error en suscripción de talleres: {ex.Message}");
+                            }
+                        });
+                    }
+                }, error => System.Diagnostics.Debug.WriteLine($"Error stream talleres: {error.Message}"));
+        }
+
         private async Task CargarVehiculos()
         {
             var lista = await _firebaseService.GetVehiculosClienteAsync(_clienteId);
-            MainThread.BeginInvokeOnMainThread(() => {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
                 Vehiculos.Clear();
                 foreach (var v in lista) Vehiculos.Add(v);
             });
@@ -77,8 +123,8 @@ namespace AutoShift.ViewModels
 
         private void IniciarEscuchaSolicitudes()
         {
-            _suscripcionFirebase?.Dispose();
-            _suscripcionFirebase = _firebaseService.EscucharSolicitudesCliente(_clienteId)
+            _suscripcionSolicitudes?.Dispose();
+            _suscripcionSolicitudes = _firebaseService.EscucharSolicitudesCliente(_clienteId)
                 .Subscribe(evento =>
                 {
                     if (evento.Object != null)
@@ -142,10 +188,16 @@ namespace AutoShift.ViewModels
             var resultado = await Application.Current.MainPage.ShowPopupAsync(new CustomConfirmPopup("Confirmar Entrega", "¿Confirmas que recibiste tu vehículo y el trabajo es correcto?"));
             if (resultado is bool val && val)
             {
+                IsBusy = true;
                 solicitud.Estado = "FINALIZADO";
                 await _firebaseService.GuardarSolicitudTaller(solicitud.TallerId, solicitud);
                 await _firebaseService.GuardarSolicitudCliente(_clienteId, solicitud);
-                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("¡Finalizado!", "Servicio cerrado con éxito."));
+
+                var parameters = new Dictionary<string, object> { { "Solicitud", solicitud } };
+                await Shell.Current.GoToAsync("DejarResenaPage", parameters);
+
+                await Application.Current.MainPage.ShowPopupAsync(new CustomAlertPopup("¡Finalizado!", "Servicio cerrado con éxito. Por favor, califica al taller."));
+                IsBusy = false;
             }
         }
 
@@ -157,7 +209,8 @@ namespace AutoShift.ViewModels
         [RelayCommand]
         private async Task CerrarSesion()
         {
-            _suscripcionFirebase?.Dispose();
+            _suscripcionSolicitudes?.Dispose();
+            _suscripcionTalleres?.Dispose();
             Preferences.Clear();
             await Shell.Current.GoToAsync("//LoginPage");
         }

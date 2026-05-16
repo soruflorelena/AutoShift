@@ -79,8 +79,6 @@ namespace AutoShift.ViewModels
         private List<InfoFalla> MotorInferenciaProfesional(string input)
         {
             var fallasIdentificadas = new List<InfoFalla>();
-
-            // BASE DE CONOCIMIENTO TÉCNICA AMPLIADA
             var catalogoIA = new[]
             {
                 new InfoFalla {
@@ -129,7 +127,6 @@ namespace AutoShift.ViewModels
 
             foreach (var falla in catalogoIA)
             {
-                // Si la descripción del usuario contiene al menos una palabra clave de esta categoría
                 if (falla.Keys.Any(k => input.Contains(k)))
                 {
                     fallasIdentificadas.Add(falla);
@@ -159,14 +156,12 @@ namespace AutoShift.ViewModels
             };
             await Shell.Current.GoToAsync("DetalleTallerPage", parameters);
 
-            // 1. LIMPIAR EL FORMULARIO DESPUÉS DE ENVIAR
             Sintomas = string.Empty;
             ResultadosMultiples.Clear();
             MostrarResultados = false;
         }
     }
 
-    // Clases de soporte
     public class InfoFalla
     {
         public string Categoria { get; set; } = string.Empty;

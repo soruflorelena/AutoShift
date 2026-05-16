@@ -1,10 +1,10 @@
 ﻿using AutoShift.Models;
 using AutoShift.Services;
+using AutoShift.Views;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Text.Json;
-using CommunityToolkit.Maui.Views;
-using AutoShift.Views;
 
 namespace AutoShift.ViewModels
 {
@@ -17,7 +17,7 @@ namespace AutoShift.ViewModels
         [ObservableProperty] string telefono;
         [ObservableProperty] string password;
         [ObservableProperty] string confirmPassword;
-        [ObservableProperty] bool isPasswordVisible = true; // Para el botón de ojo
+        [ObservableProperty] bool isPasswordVisible = true; 
 
         // Campos de Dirección Separados
         [ObservableProperty] string codigoPostal;
@@ -54,7 +54,7 @@ namespace AutoShift.ViewModels
 
                     Colonia = place.GetProperty("place name").GetString();
                     Estado = place.GetProperty("state").GetString();
-                    Ciudad = "México"; // La API a veces agrupa por estado, puedes ajustarlo
+                    Ciudad = "México"; 
                 }
             }
             catch { /* Error de red */ }

@@ -16,7 +16,14 @@ namespace AutoShift.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            await _viewModel.InicializarDatosAsync();
+            try
+            {
+                await _viewModel.InicializarDatosAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al inicializar cliente: {ex.Message}");
+            }
         }
     }
 }

@@ -10,7 +10,7 @@
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <conv:StringToBoolConverter x:Key="StringToBool" />
+            <conv:StringToBoolConverter x:Key="StringToBoolConverter" />
             <conv:ExpandedToTextConverter x:Key="ExpandedToTextConverter" />
         </ResourceDictionary>
     </Application.Resources>

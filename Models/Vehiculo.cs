@@ -1,5 +1,3 @@
-using System;
-
 namespace AutoShift.Models
 {
     public class Vehiculo

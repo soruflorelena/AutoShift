@@ -11,51 +11,83 @@
     <Grid RowDefinitions="Auto, *">
 
         <Border Grid.Row="0" 
-                BackgroundColor="#1A1D23" 
-                StrokeThickness="0" 
-                Padding="20,50,20,25"
-                StrokeShape="RoundRectangle 0,0,30,30">
-            <VerticalStackLayout Spacing="20">
-                <Grid ColumnDefinitions="Auto, *" ColumnSpacing="20">
-                    <Border Stroke="#FFC107" StrokeThickness="2" StrokeShape="RoundRectangle 20" HeightRequest="90" WidthRequest="90">
-                        <Image Source="{Binding TallerSeleccionado.FotoUrl}" Aspect="AspectFill" />
-                    </Border>
+        BackgroundColor="#1A1D23" 
+        StrokeThickness="0" 
+        Padding="20,60,20,30"
+        StrokeShape="RoundRectangle 0,0,40,40">
+            <VerticalStackLayout Spacing="15">
 
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
-                        <Label Text="{Binding TallerSeleccionado.Nombre}" FontSize="22" FontAttributes="Bold" TextColor="White" />
-                        <HorizontalStackLayout Spacing="5">
-                            <Label Text="📍" FontSize="12" VerticalOptions="Center"/>
-                            <Label Text="{Binding TallerSeleccionado.Ubicacion}" FontSize="13" TextColor="#9BA1AD" />
-                        </HorizontalStackLayout>
-                        <Border BackgroundColor="#2E333D" HorizontalOptions="Start" Padding="10,2" StrokeShape="RoundRectangle 5">
-                            <Label Text="{Binding ServiciosDisponibles.Count, StringFormat='{0} SERVICIOS'}" FontSize="10" FontAttributes="Bold" TextColor="#FFC107" />
-                        </Border>
-                    </VerticalStackLayout>
-                </Grid>
-                <Label Text="Configure su solicitud seleccionando el vehículo y los servicios requeridos." FontSize="12" TextColor="#4F5664" HorizontalTextAlignment="Center" />
+                <Label Text="{Binding TallerSeleccionado.Nombre}" 
+               FontSize="26" 
+               FontAttributes="Bold" 
+               TextColor="White" />
+
+                <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                    <Label Text="⭐" FontSize="14" VerticalOptions="Center"/>
+                    <Label Text="{Binding TallerSeleccionado.CalificacionPromedio, StringFormat='{0:F1}'}" 
+                   TextColor="White" 
+                   FontSize="15" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center"/>
+                    <Label Text="{Binding TallerSeleccionado.TotalResenas, StringFormat='({0} reseñas)'}" 
+                   TextColor="#666E7D" 
+                   FontSize="13" 
+                   VerticalOptions="Center"
+                   Margin="5,0,0,0"/>
+                </HorizontalStackLayout>
+
+                <VerticalStackLayout Spacing="8">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="📍" FontSize="14" VerticalOptions="Center"/>
+                        <Label Text="{Binding TallerSeleccionado.DireccionCompleta}"
+                               FontSize="14"
+                               TextColor="#9BA1AD"
+                               LineBreakMode="WordWrap"/>
+                    </HorizontalStackLayout>
+
+                    <HorizontalStackLayout Spacing="8" IsVisible="{Binding TallerSeleccionado.Referencias, Converter={StaticResource StringToBoolConverter}}">
+                        <Label Text="ℹ️" FontSize="14" VerticalOptions="Center"/>
+                        <Label Text="{Binding TallerSeleccionado.Referencias, StringFormat='Ref: {0}'}"
+                               FontSize="13"
+                               TextColor="#666E7D"
+                               LineBreakMode="WordWrap" />
+                    </HorizontalStackLayout>
+
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="📞" FontSize="14" VerticalOptions="Center"/>
+                        <Label Text="{Binding TallerSeleccionado.Telefono, FallbackValue='No disponible'}" 
+                       FontSize="14" 
+                       TextColor="#FFC107" 
+                       FontAttributes="Bold" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <Border BackgroundColor="#2E333D" HorizontalOptions="Start" Padding="12,4" StrokeShape="RoundRectangle 8">
+                    <Label Text="{Binding ServiciosDisponibles.Count, StringFormat='{0} SERVICIOS DISPONIBLES'}" 
+                   FontSize="10" FontAttributes="Bold" TextColor="#FFC107" />
+                </Border>
             </VerticalStackLayout>
         </Border>
 
         <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-            <VerticalStackLayout Padding="20" Spacing="25">
+            <VerticalStackLayout Padding="20" Spacing="30">
 
-                <VerticalStackLayout Spacing="12">
+                <VerticalStackLayout Spacing="15">
                     <Grid ColumnDefinitions="*, Auto">
-                        <Label Text="VEHÍCULO ASOCIADO" TextColor="#FFC107" FontSize="11" FontAttributes="Bold" CharacterSpacing="1"/>
-                        <Button Grid.Column="1" Text="ADMINISTRAR" Command="{Binding VerVehiculosCommand}" BackgroundColor="Transparent" TextColor="#F54927" FontSize="10" HeightRequest="25" Padding="0"/>
+                        <Label Text="MIS VEHÍCULOS" TextColor="#FFC107" FontSize="12" FontAttributes="Bold" CharacterSpacing="1.5"/>
+                        <Button Grid.Column="1" Text="ADMINISTRAR" Command="{Binding VerVehiculosCommand}" BackgroundColor="Transparent" TextColor="#F54927" FontSize="11" Padding="0"/>
                     </Grid>
 
                     <CollectionView ItemsSource="{Binding Vehiculos}" 
                                     SelectedItem="{Binding VehiculoSeleccionado}" 
                                     SelectionMode="Single" 
-                                    HeightRequest="150">
+                                    HeightRequest="140">
                         <CollectionView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="12"/>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
-                            <!-- AutoShift\Views\DetalleTallerPage.xaml (corrección) -->
                             <DataTemplate x:DataType="models:Vehiculo">
-                                <Border x:Name="CardBorder" StrokeThickness="2" StrokeShape="RoundRectangle 15" WidthRequest="180" Padding="15">
+                                <Border x:Name="CardBorder" StrokeThickness="2" StrokeShape="RoundRectangle 20" WidthRequest="200" Padding="18">
                                     <VisualStateManager.VisualStateGroups>
                                         <VisualStateGroup x:Name="CommonStates">
                                             <VisualState x:Name="Normal">
@@ -72,10 +104,12 @@
                                             </VisualState>
                                         </VisualStateGroup>
                                     </VisualStateManager.VisualStateGroups>
-                                    <VerticalStackLayout Spacing="2" VerticalOptions="Center">
-                                        <Label Text="{Binding Marca}" TextColor="White" FontAttributes="Bold" FontSize="15"/>
+                                    <VerticalStackLayout Spacing="4" VerticalOptions="Center">
+                                        <Label Text="{Binding Marca}" TextColor="White" FontAttributes="Bold" FontSize="16"/>
                                         <Label Text="{Binding Modelo}" TextColor="#9BA1AD" FontSize="13"/>
-                                        <Label Text="{Binding Placas}" TextColor="#FFC107" FontSize="11" FontAttributes="Bold" Margin="0,5,0,0"/>
+                                        <Border BackgroundColor="#2E333D" HorizontalOptions="Start" Padding="8,2" StrokeShape="RoundRectangle 5" Margin="0,8,0,0">
+                                            <Label Text="{Binding Placas}" TextColor="#FFC107" FontSize="11" FontAttributes="Bold"/>
+                                        </Border>
                                     </VerticalStackLayout>
                                 </Border>
                             </DataTemplate>
@@ -83,31 +117,32 @@
                     </CollectionView>
                 </VerticalStackLayout>
 
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="DETALLES ADICIONALES" TextColor="#FFC107" FontSize="11" FontAttributes="Bold" CharacterSpacing="1"/>
-                    <Border Stroke="#2E333D" StrokeThickness="1" BackgroundColor="#16191E" StrokeShape="RoundRectangle 12" Padding="10">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="SÍNTOMAS O DETALLES" TextColor="#FFC107" FontSize="12" FontAttributes="Bold" CharacterSpacing="1.5"/>
+                    <Border Stroke="#2E333D" StrokeThickness="1" BackgroundColor="#16191E" StrokeShape="RoundRectangle 15" Padding="15">
                         <Editor Text="{Binding DescripcionCliente}" 
-                                Placeholder="Ej: El pedal se siente esponjoso al frenar..."
+                                Placeholder="Describe lo que le sucede a tu vehículo..."
                                 PlaceholderColor="#4F5664"
                                 TextColor="White"
-                                HeightRequest="100"
-                                FontSize="14"/>
+                                AutoSize="TextChanges"
+                                MinimumHeightRequest="100"
+                                FontSize="15"/>
                     </Border>
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Spacing="15">
-                    <Label Text="CATÁLOGO DE SERVICIOS" TextColor="#FFC107" FontSize="11" FontAttributes="Bold" CharacterSpacing="1"/>
+                    <Label Text="CATÁLOGO DE SERVICIOS" TextColor="#FFC107" FontSize="12" FontAttributes="Bold" CharacterSpacing="1.5"/>
                     <CollectionView ItemsSource="{Binding ServiciosDisponibles}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="viewmodels:ServicioSeleccionable">
-                                <Border Stroke="#2E333D" StrokeThickness="1" BackgroundColor="#16191E" Margin="0,0,0,10" StrokeShape="RoundRectangle 12" Padding="15">
-                                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="15">
-                                        <CheckBox IsChecked="{Binding IsSelected}" Color="#FFC107" VerticalOptions="Start"/>
-                                        <VerticalStackLayout Grid.Column="1" Spacing="2">
-                                            <Label Text="{Binding DatosServicio.Nombre}" FontAttributes="Bold" FontSize="15" TextColor="White" />
-                                            <Label Text="{Binding DatosServicio.Descripcion}" FontSize="12" TextColor="#9BA1AD" LineBreakMode="WordWrap" />
-                                            <Label Text="{Binding DatosServicio.PrecioBase, StringFormat='Base: ${0:N2}'}" FontSize="12" FontAttributes="Bold" TextColor="#FFC107" Margin="0,5,0,0" />
+                                <Border Stroke="#2E333D" StrokeThickness="1" BackgroundColor="#16191E" Margin="0,0,0,12" StrokeShape="RoundRectangle 15" Padding="18">
+                                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="15" VerticalOptions="Center">
+                                        <CheckBox IsChecked="{Binding IsSelected}" Color="#FFC107" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                            <Label Text="{Binding DatosServicio.Nombre}" FontAttributes="Bold" FontSize="16" TextColor="White" />
+                                            <Label Text="{Binding DatosServicio.Descripcion}" FontSize="12" TextColor="#666E7D" MaxLines="2" LineBreakMode="TailTruncation" />
                                         </VerticalStackLayout>
+                                        <Label Grid.Column="2" Text="{Binding DatosServicio.PrecioBase, StringFormat='${0:N0}'}" VerticalOptions="Center" FontAttributes="Bold" FontSize="15" TextColor="#FFC107" />
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -115,19 +150,49 @@
                     </CollectionView>
                 </VerticalStackLayout>
 
-                <Border BackgroundColor="#1A1D23" Stroke="#FFC107" StrokeThickness="1" StrokeShape="RoundRectangle 20" Padding="20" Margin="0,10,0,20">
-                    <VerticalStackLayout Spacing="15">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="RESEÑAS DE OTROS CLIENTES" TextColor="#FFC107" FontSize="12" FontAttributes="Bold" CharacterSpacing="1.5"/>
+                    <CollectionView ItemsSource="{Binding Resenas}" HeightRequest="200">
+                        <CollectionView.EmptyView>
+                            <Label Text="Este taller aún no tiene reseñas." TextColor="#666E7D" HorizontalOptions="Center" Margin="0,10"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Resena">
+                                <Border Stroke="#2E333D" StrokeThickness="1" BackgroundColor="#16191E" Margin="0,0,0,10" StrokeShape="RoundRectangle 12" Padding="15">
+                                    <VerticalStackLayout Spacing="5">
+                                        <Grid ColumnDefinitions="*, Auto">
+                                            <Label Text="{Binding ClienteNombre}" FontAttributes="Bold" TextColor="White" FontSize="14"/>
+                                            <HorizontalStackLayout Grid.Column="1" Spacing="2">
+                                                <Label Text="⭐" FontSize="12"/>
+                                                <Label Text="{Binding Calificacion}" TextColor="#FFC107" FontAttributes="Bold" FontSize="12"/>
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                        <Label Text="{Binding Comentario}" TextColor="#9BA1AD" FontSize="13" LineBreakMode="WordWrap"/>
+                                        <Label Text="{Binding Fecha, StringFormat='{0:dd/MM/yyyy}'}" TextColor="#4F5664" FontSize="10" HorizontalOptions="End"/>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+                <Border BackgroundColor="#1A1D23" Stroke="#FFC107" StrokeThickness="1" StrokeShape="RoundRectangle 25" Padding="25" Margin="0,10,0,30">
+                    <VerticalStackLayout Spacing="20">
                         <Grid ColumnDefinitions="*, Auto">
-                            <Label Text="SUBTOTAL ESTIMADO" TextColor="White" VerticalOptions="Center" FontSize="13" FontAttributes="Bold"/>
-                            <Label Grid.Column="1" Text="{Binding Subtotal, StringFormat='${0:N2}'}" TextColor="#FFC107" FontSize="22" FontAttributes="Bold" />
+                            <VerticalStackLayout>
+                                <Label Text="TOTAL ESTIMADO" TextColor="#9BA1AD" FontSize="11" FontAttributes="Bold" CharacterSpacing="1"/>
+                                <Label Text="{Binding Subtotal, StringFormat='${0:N2}'}" TextColor="White" FontSize="28" FontAttributes="Bold" />
+                            </VerticalStackLayout>
+                            <Button Grid.Column="1" 
+                                    Text="ENVIAR" 
+                                    Command="{Binding EnviarSolicitudCommand}" 
+                                    BackgroundColor="#FFC107" 
+                                    TextColor="#0F1115" 
+                                    FontAttributes="Bold"
+                                    WidthRequest="120"
+                                    HeightRequest="50" 
+                                    CornerRadius="15" />
                         </Grid>
-                        <Button Text="ENVIAR SOLICITUD" 
-                                Command="{Binding EnviarSolicitudCommand}" 
-                                BackgroundColor="#FFC107" 
-                                TextColor="#0F1115" 
-                                FontAttributes="Bold"
-                                HeightRequest="55" 
-                                CornerRadius="12" />
                     </VerticalStackLayout>
                 </Border>
 
